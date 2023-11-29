@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ThreeDotActivities.ContactUsActivity">
+
+    <ImageView
+        android:layout_width="@dimen/_65sdp"
+        android:layout_height="@dimen/_70sdp"
+        android:src="@drawable/etccircle"/>
+    <ImageView
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/etccircle2"/>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/back"
+        android:layout_width="@dimen/_28sdp"
+        android:layout_height="@dimen/_28sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:backgroundTint="#DCA343"
+        app:cardCornerRadius="@dimen/_10sdp">
+
+        <ImageView
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:src="@drawable/arrow_back" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contact Us"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/sofia_pro_black"
+        android:textSize="@dimen/_30sdp"
+        android:textColor="@color/black"/>
+    <LinearLayout
+        android:id="@+id/llayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/contact"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/bg_img"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_150sdp"
+            android:contentDescription="TODO"
+            android:src="@drawable/callcenter" />
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PostCraft"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/sofia_pro_black"
+            android:textSize="@dimen/_30sdp"
+            android:textColor="@color/black"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:layout_below="@id/llayout"
+        android:paddingBottom="16dp">
+
+
+        <View
+            android:id="@+id/line_view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="2dp"
+            android:background="@color/black" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line_view"
+            android:layout_marginStart="22dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="16dp">
+
+            <ImageView
+                android:id="@+id/imgg"
+                android:layout_width="30dp"
+                android:layout_height="60dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:contentDescription="TODO"
+                android:src="@drawable/contact" />
+
+            <LinearLayout
+                android:id="@+id/lin_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/imgg"
+                android:layout_toRightOf="@id/imgg"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="0dp"
+                    android:text="Phone No."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/call"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="8dp"
+                    android:text="+91 6265784954"
+                    android:textColor="#0277BD"
+                    android:textColorHighlight="@android:color/holo_red_dark"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/img_mob"
+                android:layout_width="35dp"
+                android:layout_height="70dp"
+                android:layout_below="@id/lin_1"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="12dp"
+                android:contentDescription="TODO"
+                android:src="@drawable/contact_gmail" />
+
+            <LinearLayout
+                android:id="@+id/lin_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/lin_1"
+                android:layout_marginTop="15dp"
+                android:layout_toEndOf="@id/img_mob"
+                android:layout_toRightOf="@id/img_mob"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="0dp"
+                    android:text="Email"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="8dp"
+                    android:text="katrelucky810@gmail.com"
+                    android:textColor="#0277BD"
+                    android:textColorHighlight="@color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/mail_img"
+                android:layout_width="30dp"
+                android:layout_height="60dp"
+                android:layout_below="@id/lin_2"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="15dp"
+                android:contentDescription="TODO"
+                android:src="@drawable/contact_query" />
+
+            <LinearLayout
+                android:id="@+id/lin_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/lin_2"
+                android:layout_marginTop="15dp"
+                android:layout_toEndOf="@id/mail_img"
+                android:layout_toRightOf="@id/mail_img"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="0dp"
+                    android:text="Ask Your Query"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/sendYourMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Send Your Message"
+                    android:textColor="#0277BD"
+                    android:textColorHighlight="@color/black"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/imgProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="250dp">
+
+                    <ImageView
+                        android:id="@+id/IvContactUsWhatsApp"
+                        android:layout_width="@dimen/_30ssp"
+                        android:layout_height="@dimen/_30ssp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="-10sp"
+                        android:src="@drawable/whatsapp" />
+
+                    <ImageView
+                        android:id="@+id/IvContactUsInstagram"
+                        android:layout_width="@dimen/_28ssp"
+                        android:layout_height="@dimen/_28ssp"
+                        android:layout_marginLeft="65dp"
+                        android:contentDescription="TODO"
+                        android:src="@drawable/instagram" />
+
+                    <ImageView
+                        android:id="@+id/IvContactUsShare"
+                        android:layout_width="@dimen/_23ssp"
+                        android:layout_height="@dimen/_23ssp"
+                        android:layout_marginLeft="130dp"
+                        android:layout_marginTop="@dimen/_2ssp"
+                        android:contentDescription="TODO"
+                        android:src="@drawable/share" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

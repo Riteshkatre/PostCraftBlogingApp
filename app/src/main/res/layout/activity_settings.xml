@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/lyt"
+    android:layout_height="match_parent"
+    tools:context=".ThreeDotActivities.SettingsActivity">
+
+    <ImageView
+        android:layout_width="@dimen/_65sdp"
+        android:layout_height="@dimen/_70sdp"
+        android:src="@drawable/etccircle"/>
+    <ImageView
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/etccircle2"/>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/back"
+        android:layout_width="@dimen/_28sdp"
+        android:layout_height="@dimen/_28sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:backgroundTint="#DCA343"
+        app:cardCornerRadius="@dimen/_10sdp">
+
+        <ImageView
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:src="@drawable/arrow_back" />
+    </androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings "
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/sofia_pro_black"
+        android:textSize="@dimen/_30sdp"
+        android:textColor="@color/black"/>
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/contact"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/bg_img"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_150sdp"
+            android:src="@drawable/success" />
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PostCraft"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/sofia_pro_black"
+            android:textSize="@dimen/_30sdp"
+            android:textColor="@color/black"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll1"
+        android:layout_below="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_31ssp"
+        android:layout_marginLeft="@dimen/_5ssp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lock screen"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_18ssp"
+            android:fontFamily="@font/sofia_pro_black"/>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/SwitchLock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginRight="@dimen/_7ssp"
+            />
+    </LinearLayout>
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_below="@+id/ll1"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/_7ssp"
+        android:layout_marginTop="@dimen/_31ssp"
+        app:cardCornerRadius="@dimen/_5ssp"
+        android:backgroundTint="#A39F9F"
+        android:elevation="@dimen/_180sdp"
+        android:layout_marginRight="@dimen/_7ssp"
+        android:layout_height="@dimen/_50ssp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_5ssp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Application version"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_18ssp"
+                android:fontFamily="@font/sofia_pro_black"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="v4.1"
+                android:layout_marginTop="@dimen/_5ssp"
+                android:textSize="@dimen/_14ssp"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+</RelativeLayout>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.CommentActivity">
+    <ImageView
+        android:layout_width="@dimen/_65sdp"
+        android:layout_height="@dimen/_70sdp"
+        android:src="@drawable/etccircle"/>
+    <ImageView
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/etccircle2"/>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/back"
+        android:layout_width="@dimen/_28sdp"
+        android:layout_height="@dimen/_28sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:backgroundTint="#DCA343"
+        app:cardCornerRadius="@dimen/_10sdp">
+
+        <ImageView
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:src="@drawable/arrow_back" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Comment's"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/sofia_pro_black"
+        android:textSize="@dimen/_30sdp"
+        android:textColor="@color/black">
+    </TextView>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_below="@+id/comments"
+        android:id="@+id/swipeRefresh"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_460sdp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv"
+            android:layout_width="wrap_content"
+            tools:itemCount="6"
+            tools:listitem="@layout/item_comment"
+            android:layout_height="wrap_content"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_below="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_80sdp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        app:cardElevation="10dp"
+        app:cardCornerRadius="@dimen/_10sdp"
+        android:backgroundTint="#4EA598">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Comments"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_15sdp"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_marginStart="@dimen/_7sdp"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:weightSum="100"
+            android:layout_height="wrap_content">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/proImage"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_weight="20"
+                android:src="@drawable/users"
+                android:layout_gravity="center"
+                android:layout_height="@dimen/_30sdp"/>
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_30sdp"
+                android:elevation="10dp"
+                android:layout_weight="60"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_gravity="center_vertical"
+                app:cardCornerRadius="@dimen/_25sdp">
+
+                <EditText
+                    android:id="@+id/etv"
+                    android:layout_width="@dimen/_200sdp"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:inputType="textMultiLine"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:hint="Add comments here!!!"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColorHint="@color/black"
+                    android:maxLines="6"
+                    android:scrollbars="vertical"
+                    android:imeOptions="actionDone"/>
+
+            </androidx.cardview.widget.CardView>
+            <ImageView
+                android:id="@+id/btnAdd"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_weight="15"
+                android:layout_gravity="center"
+                android:src="@drawable/sendmessage"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
