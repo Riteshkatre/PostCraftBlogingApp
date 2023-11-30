@@ -98,9 +98,9 @@
         android:id="@+id/tvNoData"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="No Data Available!!"
+        android:text="No Post Available!!"
         android:gravity="center"
-        android:textSize="@dimen/_30sdp"
+        android:textSize="@dimen/_20sdp"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:visibility="gone"/>

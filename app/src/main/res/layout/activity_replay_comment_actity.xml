@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.ReplayCommentActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="@dimen/_65sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:src="@drawable/etccircle"/>
+        <ImageView
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/etccircle2"/>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/back"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:backgroundTint="#DCA343"
+            app:cardCornerRadius="@dimen/_10sdp">
+
+            <ImageView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:src="@drawable/arrow_back" />
+        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ReplayComment"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/sofia_pro_black"
+            android:textSize="@dimen/_25sdp"
+            android:textColor="@color/black">
+        </TextView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv"
+            android:layout_below="@+id/tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_70sdp"
+            app:cardElevation="@dimen/_10sdp"
+            app:cardCornerRadius="@dimen/_6sdp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#EDEDED">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40sdp"
+                    android:orientation="horizontal">
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/userProfile"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:src="@drawable/users"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/userName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="User Name"
+                            android:textSize="@dimen/_13sdp"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:fontFamily="@font/sofia_pro_black"
+                            android:textColor="@color/black"/>
+                        <TextView
+                            android:id="@+id/tvEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:hint="youremail@gmail.com"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tvComment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:hint="its is nice bruhhhhh"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black"
+                        android:textSize="@dimen/_12sdp" />
+
+                </RelativeLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_below="@+id/cv"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:layout_margin="@dimen/_18sdp"
+            android:layout_height="@dimen/_80sdp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            app:cardElevation="10dp"
+            app:cardCornerRadius="@dimen/_10sdp"
+            android:backgroundTint="#4EA598">
+            <TextView
+                android:id="@+id/dialogEtv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Replay Comment"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/_7sdp"
+                android:layout_marginStart="@dimen/_7sdp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:weightSum="100"
+                android:layout_height="wrap_content">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_30sdp"
+                    android:elevation="10dp"
+                    android:layout_weight="60"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_gravity="center_vertical"
+                    app:cardCornerRadius="@dimen/_25sdp">
+
+                    <EditText
+                        android:id="@+id/editTextReply"
+                        android:layout_width="@dimen/_200sdp"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:inputType="textMultiLine"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:hint="Add comments here!!!"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColorHint="@color/black"
+                        android:maxLines="6"
+                        android:scrollbars="vertical"
+                        android:imeOptions="actionDone"/>
+
+                </androidx.cardview.widget.CardView>
+                <ImageView
+                    android:id="@+id/buttonAddReply"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_weight="15"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:src="@drawable/sendmessage"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+
+
+
+
+
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

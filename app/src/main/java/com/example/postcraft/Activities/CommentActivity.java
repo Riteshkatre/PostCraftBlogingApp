@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -42,6 +43,8 @@ public class CommentActivity extends AppCompatActivity {
 
     EditText etv;
 
+    TextView tvNoData;
+
     ImageView btnAdd;
 
     String categoryId, PostId;
@@ -70,6 +73,8 @@ public class CommentActivity extends AppCompatActivity {
             rcv = findViewById(R.id.rcv);
             etv = findViewById(R.id.etv);
             btnAdd = findViewById(R.id.btnAdd);
+            tvNoData = findViewById(R.id.tvNoData);
+            tvNoData.setVisibility(View.VISIBLE);
             proImage = findViewById(R.id.proImage);
             sharedPreference = new SharedPreference(CommentActivity.this);
             tools = new Tools(this);
@@ -99,6 +104,7 @@ public class CommentActivity extends AppCompatActivity {
 
 
     public void getComment() {
+        tvNoData.setVisibility(View.VISIBLE);
         swipeRefresh.setRefreshing(false);
         tools.showLoading();
 
@@ -114,6 +120,7 @@ public class CommentActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         runOnUiThread(() -> {
+                            tvNoData.setVisibility(View.VISIBLE);
                             tools.stopLoading();
                             Log.e("##", e.getLocalizedMessage());
                             Toast.makeText(CommentActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
@@ -124,15 +131,21 @@ public class CommentActivity extends AppCompatActivity {
                     public void onNext(CommentResponse commentResponse) {
                         runOnUiThread(() -> {
                             tools.stopLoading();
-
                             if (commentResponse != null && commentResponse.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
+                                if (commentResponse.getCommentList() != null && commentResponse.getCommentList().size() > 0) {
+                                    // If there are comments, hide tvNoData
+                                    tvNoData.setVisibility(View.GONE);
 
-                                commentAdapter = new CommentAdapter(commentResponse.getCommentList(), CommentActivity.this);
-                                LinearLayoutManager layoutManager = new LinearLayoutManager(CommentActivity.this);
-                                rcv.setLayoutManager(layoutManager);
-                                rcv.setAdapter(commentAdapter);
-
+                                    commentAdapter = new CommentAdapter(commentResponse.getCommentList(), CommentActivity.this);
+                                    LinearLayoutManager layoutManager = new LinearLayoutManager(CommentActivity.this);
+                                    rcv.setLayoutManager(layoutManager);
+                                    rcv.setAdapter(commentAdapter);
+                                } else {
+                                    // If no comments, show tvNoData
+                                    tvNoData.setVisibility(View.VISIBLE);
+                                }
                             }
+
                         });
                     }
 

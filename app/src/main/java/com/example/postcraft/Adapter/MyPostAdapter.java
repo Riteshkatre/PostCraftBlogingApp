@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.postcraft.Activities.CommentActivity;
+import com.example.postcraft.Activities.MyPostCommentActivity;
+import com.example.postcraft.Activities.ReplayCommentActivity;
 import com.example.postcraft.NetworkResponse.Post;
 import com.example.postcraft.R;
 
@@ -70,12 +72,13 @@ public class MyPostAdapter extends RecyclerView.Adapter<MyPostAdapter.ViewHolder
         holder.postComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(v.getContext(), CommentActivity.class);
+                Intent i=new Intent(v.getContext(), MyPostCommentActivity.class);
                 i.putExtra("CategoryId", model.getCategoryId());
                 i.putExtra("PostId",model.getPostId());
                 v.getContext().startActivity(i);
             }
         });
+
 
     }
 
@@ -101,6 +104,7 @@ public class MyPostAdapter extends RecyclerView.Adapter<MyPostAdapter.ViewHolder
             postImage = itemView.findViewById(R.id.postImage);
             postComment = itemView.findViewById(R.id.postComment);
             delete = itemView.findViewById(R.id.delete);
+
 
 
         }

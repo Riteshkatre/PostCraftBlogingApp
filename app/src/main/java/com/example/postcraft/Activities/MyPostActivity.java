@@ -94,7 +94,7 @@ CardView back;
                     @Override
                     public void onError(Throwable e) {
                         runOnUiThread(() -> {
-                            tvNoData.setVisibility(View.GONE);
+                            tvNoData.setVisibility(View.VISIBLE);
                             tools.stopLoading();
                             Log.e("##", e.getLocalizedMessage());
                             Toast.makeText(MyPostActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();

@@ -141,26 +141,28 @@ public class PostActivity extends AppCompatActivity {
                     public void onError(Throwable e) {
                         runOnUiThread(() -> {
                             tools.stopLoading();
-                            tvNoData.setVisibility(View.GONE);
+                            tvNoData.setVisibility(View.VISIBLE);
                             Log.e("##", e.getLocalizedMessage());
                             Toast.makeText(PostActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         });
                     }
 
                     @Override
-                    public void onNext(PostResponse postResponce) {
+                    public void onNext(PostResponse postResponse) {
                         runOnUiThread(() -> {
                             tools.stopLoading();
-                            tvNoData.setVisibility(View.GONE);
-                            if (postResponce != null && postResponce.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
 
-                                postAdapter = new PostAdapter(postResponce.getPostList(), PostActivity.this);
-                                LinearLayoutManager layoutManager = new LinearLayoutManager(PostActivity.this);
-                                rcvPost.setLayoutManager(layoutManager);
-                                rcvPost.setAdapter(postAdapter);
+                            if (postResponse != null && postResponse.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
+                                if (postResponse.getPostList() != null && postResponse.getPostList().size() > 0) {
+                                    tvNoData.setVisibility(View.GONE);
 
-
-
+                                    postAdapter = new PostAdapter(postResponse.getPostList(), PostActivity.this);
+                                    LinearLayoutManager layoutManager = new LinearLayoutManager(PostActivity.this);
+                                    rcvPost.setLayoutManager(layoutManager);
+                                    rcvPost.setAdapter(postAdapter);
+                                } else {
+                                    tvNoData.setVisibility(View.VISIBLE);
+                                }
                             }
                         });
                     }

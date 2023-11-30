@@ -57,6 +57,16 @@
             tools:listitem="@layout/item_comment"
             android:layout_height="wrap_content"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <TextView
+        android:id="@+id/tvNoData"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No Comments Available!!"
+        android:gravity="center"
+        android:textSize="@dimen/_20sdp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:visibility="gone"/>
 
     <androidx.cardview.widget.CardView
         android:layout_below="@+id/swipeRefresh"
