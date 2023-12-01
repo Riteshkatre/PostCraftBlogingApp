@@ -148,7 +148,11 @@ public class RegisterActivity extends AppCompatActivity {
                 etPassword.requestFocus();
             } else if (!isValidPassword(password)) {
                 etPassword.setError("password must be 8 character and alphabetic and numeric there");
-            } else {
+            }
+            else if (currentPhotoFile == null || currentPhotoPath.isEmpty()) {
+                Toast.makeText(this, "Please select a profile photo", Toast.LENGTH_SHORT).show();
+                tools.stopLoading();
+            }else {
                 user_registration();
             }
         });

@@ -1,17 +1,20 @@
 package com.example.postcraft.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.postcraft.NetworkResponse.Comment;
+import com.example.postcraft.Activities.ReplayCommentActivity;
+import com.example.postcraft.NetworkResponse.CommentResponse;
 import com.example.postcraft.R;
 
 import java.util.List;
@@ -20,11 +23,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
 
-    List<Comment> commentList;
+    List<CommentResponse.Comment> commentList;
     Context context;
 
 
-    public CommentAdapter(List<Comment> commentList, Context context) {
+    public CommentAdapter(List<CommentResponse.Comment> commentList, Context context) {
         this.commentList = commentList;
         this.context = context;
     }
@@ -38,7 +41,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Comment comment=commentList.get(position);
+        CommentResponse.Comment comment=commentList.get(position);
         holder.userName.setText(comment.getFirstName());
         holder.tvComment.setText(comment.getCommentText());
         try {
@@ -46,13 +49,43 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         } catch (Exception e) {
             e.printStackTrace();
         }
-        holder.tvEmail.setText(comment.getEmail());
-     /*   holder.tvReplay.setOnClickListener(new View.OnClickListener() {
+        holder.tvReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i=new Intent(v.getContext(), ReplayCommentActivity.class);
+
+                i.putExtra("CategoryId", comment.getCategoryId());
+                i.putExtra("PostId",comment.getPostId());
+                i.putExtra("UserName",comment.getFirstName());
+                i.putExtra("comment",comment.getCommentText());
+                i.putExtra("user_Profile",comment.getProfileImage());
+                i.putExtra("comment_Id",comment.getCommentId());
+
+                v.getContext().startActivity(i);
 
             }
-        });*/
+        });
+        holder.tvEmail.setText(comment.getEmail());
+        holder.tvReplyCount.setText(String.valueOf(comment.getReplyCommentCount()));
+        holder.rcvReply.setVisibility(comment.isReplyVisible() ? View.VISIBLE : View.GONE);
+
+        holder.tvReplyCount.setOnClickListener(v -> {
+            comment.setReplyVisible(!comment.isReplyVisible());
+            notifyItemChanged(holder.getAdapterPosition());
+        });
+        holder.comment.setOnClickListener(v -> {
+            comment.setReplyVisible(!comment.isReplyVisible());
+            notifyItemChanged(holder.getAdapterPosition());
+
+        });
+
+
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
+        ReplyCommentAdapter catalogProductAdapter = new ReplyCommentAdapter(comment.getReplycommentList(),context);
+        holder.rcvReply.setLayoutManager(layoutManager);
+        holder.rcvReply.setAdapter(catalogProductAdapter);
+
 
 
 
@@ -68,7 +101,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView userProfile;
-        TextView userName,tvComment,tvEmail;
+        TextView userName,tvComment,tvEmail,tvReply,tvReplyCount;
+        ImageView comment;
+        RecyclerView rcvReply;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,7 +111,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             userName = itemView.findViewById(R.id.userName);
             tvComment = itemView.findViewById(R.id.tvComment);
             tvEmail = itemView.findViewById(R.id.tvEmail);
-            /*tvReplay = itemView.findViewById(R.id.tvReplay);*/
+            tvReply = itemView.findViewById(R.id.tvReply);
+
+            rcvReply = itemView.findViewById(R.id.rcvReply);
+            tvReplyCount = itemView.findViewById(R.id.tvReplyCount);
+            comment = itemView.findViewById(R.id.comment);
+
         }
     }
 }

@@ -17,6 +17,16 @@ public class CategoryListResponce {
     @Expose
     private String status;
 
+    private String fcmToken;
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
     public CategoryListResponce(List<Category> categoryList, String message, String status) {
         this.categoryList = categoryList;
         this.message = message;

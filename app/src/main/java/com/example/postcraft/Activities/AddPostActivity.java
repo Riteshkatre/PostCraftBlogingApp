@@ -1,28 +1,35 @@
 package com.example.postcraft.Activities;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.example.postcraft.Network.RestCall;
 import com.example.postcraft.Network.RestClient;
@@ -30,6 +37,10 @@ import com.example.postcraft.NetworkResponse.Tools;
 import com.example.postcraft.NetworkResponse.UserResponce;
 import com.example.postcraft.NetworkResponse.VeriableBag;
 import com.example.postcraft.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,8 +56,8 @@ import rx.schedulers.Schedulers;
 public class AddPostActivity extends AppCompatActivity {
 
     CardView back;
-    ImageView imgPost,imgPhotoClick;
-    String currentPhotoPath = "",categoryId;
+    ImageView imgPost, imgPhotoClick;
+    String currentPhotoPath = "", categoryId;
 
     EditText postDesc;
 
@@ -55,7 +66,7 @@ public class AddPostActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> cameraLauncher;
     int REQUEST_CAMERA_PERMISSION = 101;
-    File CurentPhotoFile ;
+    File CurentPhotoFile;
 
     SharedPreference sharedPreference;
 
@@ -68,18 +79,20 @@ public class AddPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
-        back=findViewById(R.id.back);
-        imgPost=findViewById(R.id.imgPost);
-        imgPhotoClick=findViewById(R.id.imgPhotoClick);
-        postDesc=findViewById(R.id.postDesc);
-        btnDone=findViewById(R.id.btnDone);
-        sharedPreference=new SharedPreference(AddPostActivity.this);
+        back = findViewById(R.id.back);
+        imgPost = findViewById(R.id.imgPost);
+        imgPhotoClick = findViewById(R.id.imgPhotoClick);
+        postDesc = findViewById(R.id.postDesc);
+        btnDone = findViewById(R.id.btnDone);
+        FirebaseApp.initializeApp(this);
+
+        sharedPreference = new SharedPreference(AddPostActivity.this);
 
         restCall = RestClient.createService(RestCall.class, VeriableBag.BASE_URL, VeriableBag.API_KEY);
-        tools=new Tools(this);
+        tools = new Tools(this);
 
-       i=getIntent();
-        categoryId=i.getStringExtra("category_Id");
+        i = getIntent();
+        categoryId = i.getStringExtra("category_Id");
 
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
@@ -88,7 +101,6 @@ public class AddPostActivity extends AppCompatActivity {
                 Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
             }
         });
-
 
         back.setOnClickListener(v -> finish());
         imgPhotoClick.setOnClickListener(v -> {
@@ -106,6 +118,7 @@ public class AddPostActivity extends AppCompatActivity {
             user_post();
         });
     }
+
     private boolean checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
@@ -142,9 +155,8 @@ public class AddPostActivity extends AppCompatActivity {
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         CurentPhotoFile = image;
         currentPhotoPath = image.getAbsolutePath();
-        return image;}
-
-
+        return image;
+    }
 
     public void user_post() {
         tools.showLoading();
@@ -157,10 +169,14 @@ public class AddPostActivity extends AppCompatActivity {
             tools.stopLoading();
             return;
         }
+
+        // Subscribe the user to the FCM topic "all_users"
+        subscribeToPostTopic();
+
         RequestBody tag = RequestBody.create(MediaType.parse("text/plain"), "user_post");
-        RequestBody userId = RequestBody.create(MediaType.parse("text/plain"),sharedPreference.getStringvalue("USER_ID") );
-        RequestBody categoryID = RequestBody.create(MediaType.parse("text/plain"),categoryId);
-        RequestBody  desc= RequestBody.create(MediaType.parse("text/plain"), description);
+        RequestBody userId = RequestBody.create(MediaType.parse("text/plain"), sharedPreference.getStringvalue("USER_ID"));
+        RequestBody categoryID = RequestBody.create(MediaType.parse("text/plain"), categoryId);
+        RequestBody desc = RequestBody.create(MediaType.parse("text/plain"), description);
         MultipartBody.Part fileToUpload = null;
         if (fileToUpload == null && currentPhotoPath != "") {
             try {
@@ -171,12 +187,11 @@ public class AddPostActivity extends AppCompatActivity {
                 fileToUpload = MultipartBody.Part.createFormData("post_image", file.getName(), rbPhoto);
             } catch (Exception e) {
                 Toast.makeText(this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-
                 e.printStackTrace();
             }
         }
 
-        restCall.user_post(tag, userId, categoryID, desc,fileToUpload)
+        restCall.user_post(tag, userId, categoryID, desc, fileToUpload)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
                 .subscribe(new Subscriber<UserResponce>() {
@@ -187,17 +202,14 @@ public class AddPostActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                tools.stopLoading();
-                                Log.e("API Error", e.getMessage());
-                                Toast.makeText(AddPostActivity.this, " Post Is Uploaded", Toast.LENGTH_SHORT).show();
-                                finish();
-
-                            }
+                        runOnUiThread(() -> {
+                            tools.stopLoading();
+                            Log.e("API Error", e.getMessage());
+                            Toast.makeText(AddPostActivity.this, " Post Is Uploaded", Toast.LENGTH_SHORT).show();
+                            finish();
                         });
                     }
+
                     @Override
                     public void onNext(UserResponce userResponce) {
                         runOnUiThread(() -> {
@@ -206,12 +218,11 @@ public class AddPostActivity extends AppCompatActivity {
                                     && userResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
                                 if (CurentPhotoFile != null && currentPhotoPath != null) {
                                     Toast.makeText(AddPostActivity.this, " Post Is Uploaded", Toast.LENGTH_SHORT).show();
+                                    showNotification("New Post", " Uploaded a new post!!");
                                     Intent intent = new Intent(AddPostActivity.this, HomeActivity.class);
                                     startActivity(intent);
                                     finish();
-
                                 }
-
                             } else {
                                 // Log the response for debugging
                                 Log.e("API Response", "Empty or invalid response: " + userResponce);
@@ -219,9 +230,48 @@ public class AddPostActivity extends AppCompatActivity {
                             }
                         });
                     }
-
-
                 });
+    }
 
+    private void subscribeToPostTopic() {
+        FirebaseMessaging.getInstance().subscribeToTopic("all_users")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("FCM", "Subscribed to topic: all_users");
+                        } else {
+                            Log.e("FCM", "Failed to subscribe to topic: all_users", task.getException());
+                        }
+                    }
+                });
+    }
+
+    private void showNotification(String title, String content) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        Intent intent = new Intent(this, PostActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra("category_Id", categoryId);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("channel_id", "Channel Name", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
+        Uri defaultSoundUri = Settings.System.DEFAULT_NOTIFICATION_URI;
+
+
+        Notification notification = new NotificationCompat.Builder(this, "channel_id")
+                .setSmallIcon(R.drawable.logo)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setContentIntent(pendingIntent)
+                .setSound(defaultSoundUri)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .build();
+
+        notificationManager.notify(1, notification);
     }
 }

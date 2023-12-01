@@ -104,12 +104,13 @@ CardView back;
                     @Override
                     public void onNext(PostResponse postResponse) {
                         runOnUiThread(() -> {
-                            tvNoData.setVisibility(View.GONE);
+
                             tools.stopLoading();
                             if (postResponse != null
                                     && postResponse.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)
                                     && postResponse.getPostList() != null
                                     && postResponse.getPostList().size() > 0) {
+                                tvNoData.setVisibility(View.GONE);
                                 myPostAdapter = new MyPostAdapter( postResponse.getPostList(),MyPostActivity.this);
 
                                 LinearLayoutManager layoutManager = new LinearLayoutManager(MyPostActivity.this);
@@ -143,6 +144,8 @@ CardView back;
 
 
                                 });
+                            }else {
+                                tvNoData.setVisibility(View.VISIBLE);
                             }
                         });
                     }
@@ -179,7 +182,7 @@ CardView back;
                         tools.stopLoading();
                         if (userResponce.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)){
                             Toast.makeText(MyPostActivity.this, "delete successful", Toast.LENGTH_SHORT).show();
-                            getMyPost();
+                            myPostAdapter.removePost(postId);
                         }
 
                     }

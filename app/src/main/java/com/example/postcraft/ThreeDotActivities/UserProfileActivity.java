@@ -47,29 +47,17 @@ import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 public class UserProfileActivity extends AppCompatActivity {
-
     CardView back;
-
     EditText firstName,lastName;
     ImageView imgPhotoClick;
-    CircleImageView imgUser;
-
     CircleImageView profileImage;
-
-
     private static final int REQUEST_CAMERA_PERMISSION = 101;
-
     ActivityResultLauncher<Intent> cameraLauncher;
     String currentPhotoPath = "";
     private File currentPhotoFile;
-
     Button btnDone;
     Tools tools;
-
-
-
     SharedPreference sharedPreference;
-
     RestCall restCall;
 
     @Override
@@ -78,16 +66,14 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
         back=findViewById(R.id.back);
         imgPhotoClick=findViewById(R.id.imgPhotoClick);
-        imgUser=findViewById(R.id.profileImage);
         firstName=findViewById(R.id.firstName);
         lastName=findViewById(R.id.lastName);
         profileImage=findViewById(R.id.profileImage);
         btnDone=findViewById(R.id.btnDone);
 
-        sharedPreference=new SharedPreference(UserProfileActivity.this);
+        sharedPreference=new SharedPreference(this);
         restCall = RestClient.createService(RestCall.class, VeriableBag.BASE_URL, VeriableBag.API_KEY);
         tools=new Tools(this);
-
 
 
         String firstName1 = sharedPreference.getStringvalue("FIRST_NAME");
@@ -96,7 +82,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         Log.d("PhotoPath", "Photo Path: " + photo);
 
-        Glide.with(this).load(photo).error(R.drawable.baseline_remove_red_eye_24).into(profileImage);
+        Glide.with(this).load(photo).error(R.drawable.users).into(profileImage);
 
         firstName.setText(firstName1 );
         lastName.setText(lastName1 );
@@ -112,7 +98,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
-                imgUser.setImageURI(Uri.parse(currentPhotoPath));
+                profileImage.setImageURI(Uri.parse(currentPhotoPath));
             } else {
                 Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
             }
@@ -143,17 +129,14 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
             File photoFile = null;
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                // Error occurred while creating the File
+
                 ex.printStackTrace();
             }
-            // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this, "com.example.postcraft", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -175,8 +158,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
     private void EditUserCall() {
-        String firstName1 = sharedPreference.getStringvalue("FIRST_NAME");
-        String lastName1 = sharedPreference.getStringvalue("LAST_NAME");
+
         String firstNameValue = firstName.getText().toString().trim();
         String lastNameValue = lastName.getText().toString().trim();
 
@@ -186,29 +168,21 @@ public class UserProfileActivity extends AppCompatActivity {
             tools.stopLoading();
             return;
         }
-        else if (firstNameValue.equals(firstName1)) {
-            firstName.setError("FirstName cannot be Same ");
-            firstName.requestFocus();
-            tools.stopLoading();
-            return;
-        }
+
         else if (lastNameValue.isEmpty()) {
             lastName.setError("LastName cannot be empty");
             lastName.requestFocus();
             tools.stopLoading();
             return;
         }
-        else if (lastNameValue.equals(lastName1)) {
-            lastName.setError("LastName cannot be Same");
-            lastName.requestFocus();
-            tools.stopLoading();
-            return;
-        }
+
+
         else if (currentPhotoFile == null || currentPhotoPath.isEmpty()) {
             Toast.makeText(this, "Please select a new profile photo", Toast.LENGTH_SHORT).show();
             tools.stopLoading();
             return;
         }
+
         tools.showLoading();
         RequestBody tag = RequestBody.create(MediaType.parse("text/plain"), "user_edit_profile");
         RequestBody bUserId = RequestBody.create(MediaType.parse("text/plain"), sharedPreference.getStringvalue("USER_ID"));
@@ -255,12 +229,6 @@ public class UserProfileActivity extends AppCompatActivity {
                                 if (loginResponce != null && loginResponce.getStatus() != null) {
                                     if (loginResponce.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
                                         if (currentPhotoFile != null && currentPhotoPath != null) {
-                                            sharedPreference.setStringvalue("FIRST_NAME", bfirstName.toString().trim());
-                                            sharedPreference.setStringvalue("LAST_NAME", blastName.toString().trim());
-
-
-
-                                            // Update UI components immediately
                                             firstName.setText(bfirstName.toString().trim());
                                             lastName.setText(blastName.toString().trim());
                                         }
@@ -269,12 +237,16 @@ public class UserProfileActivity extends AppCompatActivity {
                                     } else {
                                         Toast.makeText(UserProfileActivity.this, "Not able to edit", Toast.LENGTH_SHORT).show();
                                     }
+                                } else {
 
+
+                                    Toast.makeText(UserProfileActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
+                                    finish();
                                 }
                             }
                         });
                     }
 
                 });
-}
+    }
 }

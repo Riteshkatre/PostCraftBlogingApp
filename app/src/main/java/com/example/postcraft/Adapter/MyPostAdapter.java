@@ -12,9 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.postcraft.Activities.CommentActivity;
 import com.example.postcraft.Activities.MyPostCommentActivity;
-import com.example.postcraft.Activities.ReplayCommentActivity;
 import com.example.postcraft.NetworkResponse.Post;
 import com.example.postcraft.R;
 
@@ -36,6 +34,16 @@ public class MyPostAdapter extends RecyclerView.Adapter<MyPostAdapter.ViewHolder
     public MyPostAdapter(List<Post> postList, Context context) {
         this.postList = postList;
         this.context = context;
+    }
+
+    public void removePost(String postId) {
+        for (int i = 0; i < postList.size(); i++) {
+            if (postList.get(i).getPostId().equals(postId)) {
+                postList.remove(i);
+                notifyItemRemoved(i);
+                break;
+            }
+        }
     }
 
     @NonNull

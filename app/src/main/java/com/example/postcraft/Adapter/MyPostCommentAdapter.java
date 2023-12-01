@@ -5,15 +5,15 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.postcraft.Activities.ReplayCommentActivity;
-import com.example.postcraft.NetworkResponse.Comment;
+import com.example.postcraft.NetworkResponse.CommentResponse;
 import com.example.postcraft.R;
 
 import java.util.List;
@@ -21,10 +21,10 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdapter.ViewHolder>{
-    List<Comment> commentList;
+    List<CommentResponse.Comment> commentList;
     Context context;
 
-    public MyPostCommentAdapter(List<Comment> commentList, Context context) {
+    public MyPostCommentAdapter(List<CommentResponse.Comment> commentList, Context context) {
         this.commentList = commentList;
         this.context = context;
     }
@@ -32,13 +32,13 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_my_post_comment, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false);
         return new MyPostCommentAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Comment comment=commentList.get(position);
+        CommentResponse.Comment comment=commentList.get(position);
         holder.userName.setText(comment.getFirstName());
         holder.tvComment.setText(comment.getCommentText());
         try {
@@ -46,7 +46,7 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
         } catch (Exception e) {
             e.printStackTrace();
         }
-        holder.tvEmail.setText(comment.getEmail());
+
         holder.tvReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,11 +58,29 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
                 i.putExtra("comment",comment.getCommentText());
                 i.putExtra("user_Profile",comment.getProfileImage());
                 i.putExtra("comment_Id",comment.getCommentId());
-                i.putExtra("email",comment.getEmail());
+
                 v.getContext().startActivity(i);
 
             }
         });
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
+        ReplyCommentAdapter catalogProductAdapter = new ReplyCommentAdapter(comment.getReplycommentList(),context);
+        holder.rcvReply.setLayoutManager(layoutManager);
+        holder.rcvReply.setAdapter(catalogProductAdapter);
+
+        holder.tvReplyCount.setText(String.valueOf(comment.getReplyCommentCount()));
+        holder.rcvReply.setVisibility(comment.isReplyVisible() ? View.VISIBLE : View.GONE);
+
+        holder.tvReplyCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                comment.setReplyVisible(!comment.isReplyVisible());
+                notifyItemChanged(holder.getAdapterPosition());
+            }
+        });
+
+
+
 
     }
 
@@ -73,7 +91,11 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView userProfile;
-        TextView userName, tvEmail, tvComment,tvReply;
+        TextView userName, tvEmail, tvComment,tvReply,tvReplyCount;
+
+        RecyclerView rcvReply;
+
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -82,6 +104,10 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
             tvEmail = itemView.findViewById(R.id.tvEmail);
             tvComment = itemView.findViewById(R.id.tvComment);
             tvReply = itemView.findViewById(R.id.tvReply);
+            rcvReply = itemView.findViewById(R.id.rcvReply);
+            tvReplyCount = itemView.findViewById(R.id.tvReplyCount);
+
+
 
 
         }

@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.postcraft.Activities.CommentActivity;
-import com.example.postcraft.Activities.SharedPreference;
 import com.example.postcraft.NetworkResponse.Post;
 import com.example.postcraft.R;
 
@@ -61,16 +60,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Intent i=new Intent(v.getContext(), CommentActivity.class);
                 i.putExtra("CategoryId", model.getCategoryId());
                 i.putExtra("PostId",model.getPostId());
-               /* SharedPreference sharedPreference = new SharedPreference(context);
-                Boolean flag = false;
-                if (model.getUserId().equals(sharedPreference.getStringvalue("USER_ID"))){
-                    flag = true;
-                }
-                i.putExtra("flag",flag);*/
+
                 v.getContext().startActivity(i);
 
             }
         });
+        /*holder.likePlus.setText(model.getLikeCount());*/
 
 
     }
@@ -86,7 +81,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView userProfile;
-        TextView userName, tvDesc, likeCount, commentCount,tvReplay;
+        TextView userName, tvDesc, likeCount, commentCount,likePlus;
         ImageView postImage, postLike, postComment;
 
         public ViewHolder(@NonNull View itemView) {
@@ -97,8 +92,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             likeCount = itemView.findViewById(R.id.likeCount);
             commentCount = itemView.findViewById(R.id.commentCount);
             postImage = itemView.findViewById(R.id.postImage);
-
-            postComment = itemView.findViewById(R.id.postComment);
+            postComment = itemView.findViewById(R.id.postComment);/*
+            likePlus = itemView.findViewById(R.id.likePlus);
+            postLike = itemView.findViewById(R.id.postLike);*/
 
         }
     }

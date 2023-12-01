@@ -1,21 +1,16 @@
 package com.example.postcraft.Activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -24,7 +19,6 @@ import com.bumptech.glide.Glide;
 import com.example.postcraft.Adapter.CommentAdapter;
 import com.example.postcraft.Network.RestCall;
 import com.example.postcraft.Network.RestClient;
-import com.example.postcraft.NetworkResponse.Comment;
 import com.example.postcraft.NetworkResponse.CommentResponse;
 import com.example.postcraft.NetworkResponse.Tools;
 import com.example.postcraft.NetworkResponse.VeriableBag;

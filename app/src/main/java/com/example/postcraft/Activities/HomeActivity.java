@@ -39,6 +39,8 @@ import com.example.postcraft.ThreeDotActivities.HelpActivity;
 import com.example.postcraft.ThreeDotActivities.SettingsActivity;
 import com.example.postcraft.ThreeDotActivities.UserProfileActivity;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -173,6 +175,8 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         getCategory();
+
+        getFCMToken();
     }
 
     @SuppressLint("MissingSuperCall")
@@ -281,4 +285,18 @@ public class HomeActivity extends AppCompatActivity {
             biometricPrompt.authenticate(promptInfo);
         }
     }
+
+    void getFCMToken(){
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                String token=task.getResult();
+                Log.i("token",token);
+
+            }
+
+
+        });
+
+    }
+
 }
