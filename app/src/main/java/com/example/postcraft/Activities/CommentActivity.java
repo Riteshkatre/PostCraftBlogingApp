@@ -98,7 +98,7 @@ public class CommentActivity extends AppCompatActivity {
 
 
     public void getComment() {
-        tvNoData.setVisibility(View.VISIBLE);
+
         swipeRefresh.setRefreshing(false);
         tools.showLoading();
 

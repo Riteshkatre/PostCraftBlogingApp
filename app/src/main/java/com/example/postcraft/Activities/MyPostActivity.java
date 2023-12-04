@@ -1,12 +1,5 @@
 package com.example.postcraft.Activities;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,20 +7,22 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.postcraft.Adapter.CategoryAdapter;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.example.postcraft.Adapter.MyPostAdapter;
 import com.example.postcraft.Network.RestCall;
 import com.example.postcraft.Network.RestClient;
-import com.example.postcraft.NetworkResponse.CategoryListResponce;
 import com.example.postcraft.NetworkResponse.Post;
 import com.example.postcraft.NetworkResponse.PostResponse;
 import com.example.postcraft.NetworkResponse.Tools;
 import com.example.postcraft.NetworkResponse.UserResponce;
 import com.example.postcraft.NetworkResponse.VeriableBag;
 import com.example.postcraft.R;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -44,17 +39,17 @@ public class MyPostActivity extends AppCompatActivity {
 
     MyPostAdapter myPostAdapter;
     TextView tvNoData;
-CardView back;
-   SwipeRefreshLayout swipeRefresh;
+    CardView back;
+    SwipeRefreshLayout swipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_post);
-        rcv=findViewById(R.id.rcv);
-        swipeRefresh=findViewById(R.id.swipeRefresh);
-        sharedPreference=new SharedPreference(this);
-        tools=new Tools(this);
+        rcv = findViewById(R.id.rcv);
+        swipeRefresh = findViewById(R.id.swipeRefresh);
+        sharedPreference = new SharedPreference(this);
+        tools = new Tools(this);
         restCall = RestClient.createService(RestCall.class, VeriableBag.BASE_URL, VeriableBag.API_KEY);
         //myPostAdapter = new MyPostAdapter( new ArrayList<>(),MyPostActivity.this);
         tvNoData = findViewById(R.id.tvNoData);
@@ -77,13 +72,11 @@ CardView back;
     }
 
 
-
-
     public void getMyPost() {
-        tvNoData.setVisibility(View.VISIBLE);
+
         swipeRefresh.setRefreshing(false);
         tools.showLoading();
-        restCall.get_my_post("get_my_post",sharedPreference.getStringvalue("USER_ID"))
+        restCall.get_my_post("get_my_post", sharedPreference.getStringvalue("USER_ID"))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<PostResponse>() {
@@ -111,7 +104,7 @@ CardView back;
                                     && postResponse.getPostList() != null
                                     && postResponse.getPostList().size() > 0) {
                                 tvNoData.setVisibility(View.GONE);
-                                myPostAdapter = new MyPostAdapter( postResponse.getPostList(),MyPostActivity.this);
+                                myPostAdapter = new MyPostAdapter(postResponse.getPostList(), MyPostActivity.this);
 
                                 LinearLayoutManager layoutManager = new LinearLayoutManager(MyPostActivity.this);
                                 rcv.setLayoutManager(layoutManager);
@@ -144,7 +137,7 @@ CardView back;
 
 
                                 });
-                            }else {
+                            } else {
                                 tvNoData.setVisibility(View.VISIBLE);
                             }
                         });
@@ -153,12 +146,9 @@ CardView back;
     }
 
 
-
-
-
-    public  void deletePost(String postId){
+    public void deletePost(String postId) {
         tools.showLoading();
-        restCall.user_delete_post("user_delete_post",postId,sharedPreference.getStringvalue("USER_ID"))
+        restCall.user_delete_post("user_delete_post", postId, sharedPreference.getStringvalue("USER_ID"))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserResponce>() {
@@ -180,22 +170,18 @@ CardView back;
                     @Override
                     public void onNext(UserResponce userResponce) {
                         tools.stopLoading();
-                        if (userResponce.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)){
+                        if (userResponce.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
                             Toast.makeText(MyPostActivity.this, "delete successful", Toast.LENGTH_SHORT).show();
                             myPostAdapter.removePost(postId);
                         }
 
                     }
                 });
-
-
     }
 
-
-
-
-
-
-
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getMyPost();
+    }
 }

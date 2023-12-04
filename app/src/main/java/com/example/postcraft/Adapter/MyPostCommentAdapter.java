@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -78,10 +79,11 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
                 notifyItemChanged(holder.getAdapterPosition());
             }
         });
+        holder.comment.setOnClickListener(v -> {
+            comment.setReplyVisible(!comment.isReplyVisible());
+            notifyItemChanged(holder.getAdapterPosition());
 
-
-
-
+        });
     }
 
     @Override
@@ -91,12 +93,9 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView userProfile;
+        ImageView comment;
         TextView userName, tvEmail, tvComment,tvReply,tvReplyCount;
-
         RecyclerView rcvReply;
-
-
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             userProfile = itemView.findViewById(R.id.userProfile);
@@ -106,10 +105,7 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
             tvReply = itemView.findViewById(R.id.tvReply);
             rcvReply = itemView.findViewById(R.id.rcvReply);
             tvReplyCount = itemView.findViewById(R.id.tvReplyCount);
-
-
-
-
+            comment = itemView.findViewById(R.id.comment);
         }
     }
 }

@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -86,7 +85,7 @@ public class PostActivity extends AppCompatActivity {
             Glide.with(this).load(photo).error(R.drawable.baseline_remove_red_eye_24).into(userProfile);
 
             back.setOnClickListener(v -> finish());
-            getPost();
+
             home.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -106,6 +105,7 @@ public class PostActivity extends AppCompatActivity {
             userProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    tools.showLoading();
                     Intent i=new Intent(PostActivity.this, MyPostActivity.class);
                     startActivity(i);
 
@@ -121,13 +121,15 @@ public class PostActivity extends AppCompatActivity {
             });
 
         }
+        getPost();
     }
+
+
 
 
     public void getPost() {
         swipeRefresh.setRefreshing(false);
         tools.showLoading();
-        tvNoData.setVisibility(View.VISIBLE);
 
         restCall.user_get_post("user_get_post", categoryId)
                 .subscribeOn(Schedulers.io())
@@ -141,7 +143,7 @@ public class PostActivity extends AppCompatActivity {
                     public void onError(Throwable e) {
                         runOnUiThread(() -> {
                             tools.stopLoading();
-                            tvNoData.setVisibility(View.VISIBLE);
+                            tvNoData.setVisibility(View.GONE);
                             Log.e("##", e.getLocalizedMessage());
                             Toast.makeText(PostActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         });
@@ -168,5 +170,12 @@ public class PostActivity extends AppCompatActivity {
                     }
 
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tools.stopLoading();
+        getPost();
     }
 }

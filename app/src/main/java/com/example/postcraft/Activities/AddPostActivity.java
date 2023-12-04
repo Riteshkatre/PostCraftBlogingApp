@@ -2,12 +2,15 @@ package com.example.postcraft.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,6 +68,8 @@ public class AddPostActivity extends AppCompatActivity {
     RestCall restCall;
 
     ActivityResultLauncher<Intent> cameraLauncher;
+    ActivityResultLauncher<Intent> galleryLauncher;
+    int REQUEST_GALLERY_PERMISSION = 102;
     int REQUEST_CAMERA_PERMISSION = 101;
     File CurentPhotoFile;
 
@@ -94,9 +99,21 @@ public class AddPostActivity extends AppCompatActivity {
         i = getIntent();
         categoryId = i.getStringExtra("category_Id");
 
+
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
                 imgPost.setImageURI(Uri.parse(currentPhotoPath));
+            } else {
+                Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
+            }
+        });
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                Uri selectedImageUri = result.getData().getData();
+                // Do something with the selected image URI
+                imgPost.setImageURI(selectedImageUri);
+                currentPhotoPath = getPathFromUri(selectedImageUri);
+
             } else {
                 Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
             }
@@ -106,17 +123,53 @@ public class AddPostActivity extends AppCompatActivity {
         imgPhotoClick.setOnClickListener(v -> {
             try {
                 currentPhotoPath = "";
-                if (checkCameraPermission()) {
-                    openCamera();
-                }
+                showImagePickerDialog();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
         });
 
         btnDone.setOnClickListener(v -> {
             user_post();
         });
+    }
+
+    private String getPathFromUri(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+
+        if (cursor == null) return null;
+
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String path = cursor.getString(column_index);
+        cursor.close();
+
+        return path;
+    }
+
+    private void showImagePickerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose Image Source");
+        builder.setItems(new CharSequence[]{"Camera", "Gallery"}, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        if (checkCameraPermission()) {
+                            openCamera();
+                        }
+                        break;
+                    case 1:
+                        if (checkGalleryPermission()) {
+                            openGallery();
+                        }
+                        break;
+                }
+            }
+        });
+        builder.show();
     }
 
     private boolean checkCameraPermission() {
@@ -127,22 +180,29 @@ public class AddPostActivity extends AppCompatActivity {
         return true;
     }
 
+    private boolean checkGalleryPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_GALLERY_PERMISSION);
+            return false;
+        }
+        return true;
+    }
+    private void openGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryLauncher.launch(galleryIntent);
+    }
     private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
             File photoFile = null;
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                // Error occurred while creating the File
                 ex.printStackTrace();
             }
-            // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "com.example.postcraft", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                Uri photoUri = FileProvider.getUriForFile(this, "com.example.postcraft.provider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 cameraLauncher.launch(takePictureIntent);
             }
         }
@@ -219,7 +279,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 if (CurentPhotoFile != null && currentPhotoPath != null) {
                                     Toast.makeText(AddPostActivity.this, " Post Is Uploaded", Toast.LENGTH_SHORT).show();
                                     showNotification("New Post", " Uploaded a new post!!");
-                                    Intent intent = new Intent(AddPostActivity.this, HomeActivity.class);
+                                    Intent intent = new Intent(AddPostActivity.this, PostActivity.class);
                                     startActivity(intent);
                                     finish();
                                 }
@@ -274,4 +334,7 @@ public class AddPostActivity extends AppCompatActivity {
 
         notificationManager.notify(1, notification);
     }
+
+
+
 }

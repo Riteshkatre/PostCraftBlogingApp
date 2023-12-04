@@ -15,11 +15,12 @@ public class Tools {
     private Dialog dialog;
     private Handler handler;
 
-
+    public Tools() {
+    }
 
     public Tools(Context context) {
         this.context = context;
-
+        dialog = new Dialog(context);
         handler = new Handler(Looper.getMainLooper());
     }
 
@@ -40,13 +41,7 @@ public class Tools {
                 if (!dialog.isShowing()) {
                     dialog.show();
                 }
-                // Schedule a task to stop loading after 5 seconds
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        stopLoading();
-                    }
-                }, 5000); // 5000 milliseconds = 5 seconds
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,6 +55,6 @@ public class Tools {
             }
         } catch (Exception e) {
             e.printStackTrace();
- }
-}
+        }
+    }
 }

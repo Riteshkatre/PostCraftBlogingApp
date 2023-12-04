@@ -112,11 +112,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             tvComment = itemView.findViewById(R.id.tvComment);
             tvEmail = itemView.findViewById(R.id.tvEmail);
             tvReply = itemView.findViewById(R.id.tvReply);
-
             rcvReply = itemView.findViewById(R.id.rcvReply);
             tvReplyCount = itemView.findViewById(R.id.tvReplyCount);
             comment = itemView.findViewById(R.id.comment);
-
         }
     }
 }

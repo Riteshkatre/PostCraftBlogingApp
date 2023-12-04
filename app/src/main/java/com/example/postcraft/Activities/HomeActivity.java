@@ -87,7 +87,7 @@ public class HomeActivity extends AppCompatActivity {
         imgSearch.setVisibility(View.VISIBLE);
         searchbar = findViewById(R.id.searchbar);
         tvNoData = findViewById(R.id.tvNoData);
-        tvNoData.setVisibility(View.VISIBLE);
+
         sharedPreference = new SharedPreference(HomeActivity.this);
         tools=new Tools(this);
 
@@ -216,7 +216,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void getCategory() {
-        tvNoData.setVisibility(View.VISIBLE);
+
         tools.showLoading();
         restCall.getCategory("getCategory")
                 .subscribeOn(Schedulers.io())

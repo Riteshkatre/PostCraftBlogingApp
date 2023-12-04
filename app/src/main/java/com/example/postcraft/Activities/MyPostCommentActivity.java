@@ -17,7 +17,6 @@ import com.example.postcraft.Adapter.MyPostCommentAdapter;
 import com.example.postcraft.Network.RestCall;
 import com.example.postcraft.Network.RestClient;
 import com.example.postcraft.NetworkResponse.CommentResponse;
-import com.example.postcraft.NetworkResponse.ReplyCommentResponse;
 import com.example.postcraft.NetworkResponse.VeriableBag;
 import com.example.postcraft.R;
 
@@ -78,7 +77,7 @@ public class MyPostCommentActivity extends AppCompatActivity {
 
 
     public void getComment() {
-        tvNoData.setVisibility(View.VISIBLE);
+
         swipeRefresh.setRefreshing(false);
         restCall.get_user_comment("get_user_comment", sharedPreference.getStringvalue("USER_ID"), categoryId, PostId)
                 .subscribeOn(Schedulers.io())

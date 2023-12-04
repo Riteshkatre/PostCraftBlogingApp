@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
-import com.bumptech.glide.Glide;
 import com.example.postcraft.Network.RestCall;
 import com.example.postcraft.Network.RestClient;
 import com.example.postcraft.NetworkResponse.LoginResponce;
@@ -91,11 +90,6 @@ public class LogingActivity extends AppCompatActivity {
         showpassword.setOnClickListener(view -> togglePasswordVisibility());
     }
 
-    private void openHomePage() {
-        Intent intent = new Intent(LogingActivity.this, HomeActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
     public void user_login(String email, String password) {
         tools.showLoading();
@@ -137,6 +131,7 @@ public class LogingActivity extends AppCompatActivity {
                                     sharedPreference.setStringvalue("EMAIL", loginResponce.getEmail());
                                     sharedPreference.setStringvalue("PHOTO",loginResponce.getProfileImage());
                                     sharedPreference.setLoggedIn(true);
+                                    Toast.makeText(LogingActivity.this, ""+loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
 
                                     Intent intent = new Intent(LogingActivity.this, HomeActivity.class);
                                     startActivity(intent);

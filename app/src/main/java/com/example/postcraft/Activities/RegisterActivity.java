@@ -2,8 +2,11 @@ package com.example.postcraft.Activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -63,6 +66,8 @@ public class RegisterActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 101;
 
     ActivityResultLauncher<Intent> cameraLauncher;
+    ActivityResultLauncher<Intent> galleryLauncher;
+    int REQUEST_GALLERY_PERMISSION = 102;
     String currentPhotoPath = "";
     private File currentPhotoFile;
 
@@ -70,7 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isPasswordVisible = false;
 
     Tools tools;
-
+    private Uri selectedImageUri;
 
 
 
@@ -95,20 +100,32 @@ public class RegisterActivity extends AppCompatActivity {
 
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
-                imgUser.setImageURI(Uri.parse(currentPhotoPath));
+                if (currentPhotoFile != null) {
+                    selectedImageUri = Uri.fromFile(currentPhotoFile);
+                    imgUser.setImageURI(selectedImageUri);
+                    currentPhotoPath = currentPhotoFile.getAbsolutePath();
+                }
             } else {
                 Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
             }
         });
 
+
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                selectedImageUri = result.getData().getData();
+                imgUser.setImageURI(selectedImageUri);
+                currentPhotoPath = getRealPathFromUri(selectedImageUri);
+            } else {
+                Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
+            }
+        });
         imgPhotoClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     currentPhotoPath = "";
-                    if (checkCameraPermission()) {
-                        openCamera();
-                    }
+                    showImagePickerDialog();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -123,6 +140,7 @@ public class RegisterActivity extends AppCompatActivity {
             String lastName = etLastName.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
+
             if (TextUtils.isEmpty(firstName)) {
                 etFirstName.setError("First name is required");
                 etFirstName.requestFocus();
@@ -146,15 +164,23 @@ public class RegisterActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(password)) {
                 etPassword.setError("Password is required");
                 etPassword.requestFocus();
+                return;
             } else if (!isValidPassword(password)) {
-                etPassword.setError("password must be 8 character and alphabetic and numeric there");
+                etPassword.setError("Password must be 8 characters long and include both alphabetic and numeric characters");
+                etPassword.requestFocus();
+                return;
             }
-            else if (currentPhotoFile == null || currentPhotoPath.isEmpty()) {
+
+            if (selectedImageUri == null && (currentPhotoFile == null || currentPhotoPath.isEmpty())) {
                 Toast.makeText(this, "Please select a profile photo", Toast.LENGTH_SHORT).show();
                 tools.stopLoading();
-            }else {
+
+            }
+            else {
                 user_registration();
             }
+
+
         });
 
         tvSignIn.setOnClickListener(v -> {
@@ -165,6 +191,45 @@ public class RegisterActivity extends AppCompatActivity {
         showpassword.setOnClickListener(view -> togglePasswordVisibility());
         back.setOnClickListener(v -> finish()) ;
     }
+
+    private void showImagePickerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose Image Source");
+        builder.setItems(new CharSequence[]{"Camera", "Gallery"}, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        if (checkCameraPermission()) {
+                            openCamera();
+                        }
+                        break;
+                    case 1:
+                        if (checkGalleryPermission()) {
+                            openGallery();
+                        }
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private String getRealPathFromUri(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if (cursor == null) {
+            return uri.getPath();
+        } else {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String path = cursor.getString(column_index);
+            cursor.close();
+            return path;
+        }
+    }
+
+
 
     private boolean isValidPassword(String password) {
         if (TextUtils.isEmpty(password)) {
@@ -225,16 +290,15 @@ public class RegisterActivity extends AppCompatActivity {
         MultipartBody.Part fileToUpload = null;
         RequestBody password = RequestBody.create(MediaType.parse("text/plain"),etPassword.getText().toString().trim());
 
-        if (fileToUpload == null && currentPhotoPath != "") {
+        if (selectedImageUri != null) {
             try {
                 StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                 StrictMode.setVmPolicy(builder.build());
-                File file = new File(currentPhotoPath);
+                File file = new File(getRealPathFromUri(selectedImageUri));
                 RequestBody rbPhoto = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                 fileToUpload = MultipartBody.Part.createFormData("profile_image", file.getName(), rbPhoto);
             } catch (Exception e) {
                 Toast.makeText(this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-
                 e.printStackTrace();
             }
         }
@@ -267,16 +331,16 @@ public class RegisterActivity extends AppCompatActivity {
                             if (userResponce != null && userResponce.getStatus() != null
                                     && userResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
                                 if (currentPhotoFile != null && currentPhotoPath != null) {
+                                    Toast.makeText(RegisterActivity.this, ""+userResponce.getMessage(), Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(RegisterActivity.this, LogingActivity.class);
                                     startActivity(intent);
                                     finish();
-
                                 }
 
                             } else {
                                 // Log the response for debugging
                                 Log.e("API Response", "Empty or invalid response: " + userResponce);
-                                Toast.makeText(RegisterActivity.this, "Empty or invalid response", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegisterActivity.this, ""+userResponce.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -310,26 +374,35 @@ public class RegisterActivity extends AppCompatActivity {
         return true;
     }
 
+    private boolean checkGalleryPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_GALLERY_PERMISSION);
+            return false;
+        }
+        return true;
+    }
+    private void openGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryLauncher.launch(galleryIntent);
+    }
     private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
             File photoFile = null;
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                // Error occurred while creating the File
                 ex.printStackTrace();
             }
-            // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "com.example.postcraft", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                Uri photoUri = FileProvider.getUriForFile(this, "com.example.postcraft.provider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 cameraLauncher.launch(takePictureIntent);
             }
         }
     }
+
+
 
     private File createImageFile() throws IOException {
         @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -338,10 +411,7 @@ public class RegisterActivity extends AppCompatActivity {
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         currentPhotoFile = image;
         currentPhotoPath = image.getAbsolutePath();
-        return image;}
-
-
-
-
+        return image;
+    }
 
 }

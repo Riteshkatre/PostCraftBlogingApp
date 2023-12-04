@@ -1,13 +1,5 @@
 package com.example.postcraft.ThreeDotActivities;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -18,11 +10,18 @@ import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.postcraft.Activities.SharedPreference;
@@ -30,7 +29,6 @@ import com.example.postcraft.Network.RestCall;
 import com.example.postcraft.Network.RestClient;
 import com.example.postcraft.NetworkResponse.LoginResponce;
 import com.example.postcraft.NetworkResponse.Tools;
-import com.example.postcraft.NetworkResponse.UserResponce;
 import com.example.postcraft.NetworkResponse.VeriableBag;
 import com.example.postcraft.R;
 
@@ -231,16 +229,17 @@ public class UserProfileActivity extends AppCompatActivity {
                                         if (currentPhotoFile != null && currentPhotoPath != null) {
                                             firstName.setText(bfirstName.toString().trim());
                                             lastName.setText(blastName.toString().trim());
+                                            Toast.makeText(UserProfileActivity.this, ""+loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
+                                            finish();
                                         }
-                                        Toast.makeText(UserProfileActivity.this, loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
-                                        finish();
+
                                     } else {
                                         Toast.makeText(UserProfileActivity.this, "Not able to edit", Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
 
 
-                                    Toast.makeText(UserProfileActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(UserProfileActivity.this, ""+loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
                                     finish();
                                 }
                             }
