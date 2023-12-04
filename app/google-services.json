@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "586684222954",
+    "project_id": "postcraft-e3194",
+    "storage_bucket": "postcraft-e3194.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:586684222954:android:e68304378ae7761ce2b693",
+        "android_client_info": {
+          "package_name": "com.example.postcraft"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd4-zJbtDDTozY5MVltvuMTlwpByGerzQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
