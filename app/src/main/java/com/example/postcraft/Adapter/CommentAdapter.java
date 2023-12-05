@@ -60,6 +60,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 i.putExtra("comment",comment.getCommentText());
                 i.putExtra("user_Profile",comment.getProfileImage());
                 i.putExtra("comment_Id",comment.getCommentId());
+                i.putExtra("email",comment.getEmail());
 
                 v.getContext().startActivity(i);
 

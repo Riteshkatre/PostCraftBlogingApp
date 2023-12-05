@@ -200,4 +200,10 @@ public class CommentActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getComment();
+        tools.stopLoading();
+    }
 }

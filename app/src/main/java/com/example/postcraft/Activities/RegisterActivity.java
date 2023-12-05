@@ -326,27 +326,31 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onNext(UserResponce userResponce) {
-                        runOnUiThread(() -> {
-                            tools.stopLoading();
-                            if (userResponce != null && userResponce.getStatus() != null
-                                    && userResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
-                                if (currentPhotoFile != null && currentPhotoPath != null) {
-                                    Toast.makeText(RegisterActivity.this, ""+userResponce.getMessage(), Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(RegisterActivity.this, LogingActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                        try {
+                            runOnUiThread(() -> {
+                                tools.stopLoading();
+                                if (userResponce != null && userResponce.getStatus() != null
+                                        && userResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
+                                    if (currentPhotoFile != null && currentPhotoPath != null) {
+                                        Toast.makeText(RegisterActivity.this, "" + userResponce.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(RegisterActivity.this, LogingActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                } else {
+                                    // Log the response for debugging
+                                    Log.e("API Response", "Empty or invalid response: " + userResponce);
+                                    Toast.makeText(RegisterActivity.this, "" + userResponce.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-
-                            } else {
-                                // Log the response for debugging
-                                Log.e("API Response", "Empty or invalid response: " + userResponce);
-                                Toast.makeText(RegisterActivity.this, ""+userResponce.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e("Redirect Error", "Error during redirection: " + e.getMessage());
+                        }
                     }
 
 
-       });
+                });
 
 }
 

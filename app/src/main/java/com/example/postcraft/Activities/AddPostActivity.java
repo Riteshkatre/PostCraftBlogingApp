@@ -75,6 +75,8 @@ public class AddPostActivity extends AppCompatActivity {
 
     SharedPreference sharedPreference;
 
+    private MultipartBody.Part fileToUpload;
+
     Intent i;
 
     Tools tools;
@@ -113,6 +115,11 @@ public class AddPostActivity extends AppCompatActivity {
                 // Do something with the selected image URI
                 imgPost.setImageURI(selectedImageUri);
                 currentPhotoPath = getPathFromUri(selectedImageUri);
+                if (!currentPhotoPath.isEmpty()) {
+                    File file = new File(currentPhotoPath);
+                    RequestBody rbPhoto = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                   fileToUpload = MultipartBody.Part.createFormData("post_image", file.getName(), rbPhoto);
+                }
 
             } else {
                 Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
@@ -270,6 +277,7 @@ public class AddPostActivity extends AppCompatActivity {
                         });
                     }
 
+
                     @Override
                     public void onNext(UserResponce userResponce) {
                         runOnUiThread(() -> {
@@ -277,17 +285,15 @@ public class AddPostActivity extends AppCompatActivity {
                             if (userResponce != null && userResponce.getStatus() != null
                                     && userResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
                                 if (CurentPhotoFile != null && currentPhotoPath != null) {
-                                    Toast.makeText(AddPostActivity.this, " Post Is Uploaded", Toast.LENGTH_SHORT).show();
-                                    showNotification("New Post", " Uploaded a new post!!");
-                                    Intent intent = new Intent(AddPostActivity.this, PostActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                    Toast.makeText(AddPostActivity.this, "Post Is Uploaded", Toast.LENGTH_SHORT).show();
+                                    showNotification("New Post", "Uploaded a new post!!");
                                 }
                             } else {
-                                // Log the response for debugging
                                 Log.e("API Response", "Empty or invalid response: " + userResponce);
                                 Toast.makeText(AddPostActivity.this, "Empty or invalid response", Toast.LENGTH_SHORT).show();
                             }
+                            Toast.makeText(AddPostActivity.this, "Post Is Uploaded", Toast.LENGTH_SHORT).show();
+                            finish();
                         });
                     }
                 });
