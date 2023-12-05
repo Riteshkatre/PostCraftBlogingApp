@@ -3,7 +3,7 @@ package com.example.postcraft.NetworkResponse;
 public class VeriableBag {
     public static  String PREF_NAME="my_aap";
     public static String KEY_NAME="user_name";
-    public static String BASE_URL="http://192.168.19.232/post-craft/api_post_craft/";
+    public static String BASE_URL="http://192.168.19.214/post-craft/api_post_craft/";
 
     public static String API_KEY="";
 
