@@ -20,6 +20,7 @@ import com.example.postcraft.Adapter.ReplayMyCommentAdapter;
 import com.example.postcraft.Network.RestCall;
 import com.example.postcraft.Network.RestClient;
 import com.example.postcraft.NetworkResponse.CommentResponse;
+import com.example.postcraft.NetworkResponse.Tools;
 import com.example.postcraft.NetworkResponse.VeriableBag;
 import com.example.postcraft.R;
 
@@ -47,6 +48,8 @@ public class MyPostCommentActivity extends AppCompatActivity {
 
     CardView back;
 
+    Tools tools;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,7 @@ public class MyPostCommentActivity extends AppCompatActivity {
         tvNoData.setVisibility(View.VISIBLE);
         swipeRefresh = findViewById(R.id.swipeRefresh);
         sharedPreference = new SharedPreference(this);
+        tools=new Tools(this);
         i = getIntent();
         categoryId = i.getStringExtra("CategoryId");
         PostId = i.getStringExtra("PostId");
@@ -84,6 +88,7 @@ public class MyPostCommentActivity extends AppCompatActivity {
     public void getComment() {
 
         swipeRefresh.setRefreshing(false);
+        tools.showLoading();
         restCall.get_user_comment("get_user_comment", sharedPreference.getStringvalue("USER_ID"), categoryId, PostId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -95,7 +100,8 @@ public class MyPostCommentActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         runOnUiThread(() -> {
-                            tvNoData.setVisibility(View.VISIBLE);
+                            tools.stopLoading();
+
 
                             Log.e("##", e.getLocalizedMessage());
                             Toast.makeText(MyPostCommentActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
@@ -109,6 +115,7 @@ public class MyPostCommentActivity extends AppCompatActivity {
 
                             if (commentResponse != null && commentResponse.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
                                 tvNoData.setVisibility(View.GONE);
+                                tools.stopLoading();
 
 
 
@@ -155,8 +162,9 @@ public class MyPostCommentActivity extends AppCompatActivity {
 
 
     public void getReplyComment() {
-        tvNoData.setVisibility(View.VISIBLE);
+
         swipeRefresh.setRefreshing(false);
+        tools.showLoading();
         restCall.get_reply_comment("get_reply_comment")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -168,7 +176,8 @@ public class MyPostCommentActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         runOnUiThread(() -> {
-                            tvNoData.setVisibility(View.VISIBLE);
+                            tools.stopLoading();
+
 
                             Log.e("##", e.getLocalizedMessage());
                             Toast.makeText(MyPostCommentActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
@@ -182,6 +191,7 @@ public class MyPostCommentActivity extends AppCompatActivity {
 
                             if (commentResponse != null && commentResponse.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
                                 tvNoData.setVisibility(View.GONE);
+                                tools.stopLoading();
 
 
                             } else {

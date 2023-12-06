@@ -114,7 +114,6 @@ public class CommentActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         runOnUiThread(() -> {
-                            tvNoData.setVisibility(View.VISIBLE);
                             tools.stopLoading();
                             Log.e("##", e.getLocalizedMessage());
                             Toast.makeText(CommentActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
