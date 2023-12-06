@@ -5,7 +5,6 @@ import com.example.postcraft.NetworkResponse.CategoryListResponce;
 import com.example.postcraft.NetworkResponse.CommentResponse;
 import com.example.postcraft.NetworkResponse.LoginResponce;
 import com.example.postcraft.NetworkResponse.PostResponse;
-import com.example.postcraft.NetworkResponse.ReplyCommentResponse;
 import com.example.postcraft.NetworkResponse.UserResponce;
 
 import okhttp3.MultipartBody;
@@ -114,7 +113,22 @@ public interface RestCall {
     @POST("reply_comment.php")
     Single<CommentResponse> get_reply_comment(
             @Field("tag") String tag);
+    @FormUrlEncoded
+    @POST("comment.php")
+    Single<CommentResponse> user_comment_delete(
+            @Field("tag") String tag,
+            @Field("user_id") String user_id,
+            @Field("comment_id") String comment_id,
+            @Field("post_id") String post_id);
 
+    @FormUrlEncoded
+    @POST("reply_comment.php")
+    Single<CommentResponse> user_reply_comment_delete(
+            @Field("tag") String tag,
+            @Field("reply_comment_id") String reply_comment_id,
+            @Field("user_id") String user_id,
+            @Field("comment_id") String comment_id,
+            @Field("post_id") String post_id);
 
 
 

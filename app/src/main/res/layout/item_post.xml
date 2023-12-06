@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -64,7 +65,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="10"
+                android:weightSum="100"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:orientation="horizontal">
 
@@ -88,14 +89,14 @@
                     android:id="@+id/postComment"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
-                    android:layout_weight="1"
+                    android:layout_weight="10"
                     android:src="@drawable/comment"/>
                 <TextView
                     android:id="@+id/commentCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:layout_weight="1"
+                    android:layout_weight="5"
                     android:textSize="@dimen/_15sdp"
                     android:hint="48"/>
 
@@ -104,10 +105,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/_15sdp"
-                    android:layout_marginStart="@dimen/_70sdp"
-                    android:layout_weight="6"
-                    android:hint="55"/>
+                    android:textSize="@dimen/_12sdp"
+                    android:textAlignment="textEnd"
+                    android:gravity="center_vertical"
+                    android:layout_weight="80"
+                    android:hint="55"
+                    tools:ignore="RtlCompat" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

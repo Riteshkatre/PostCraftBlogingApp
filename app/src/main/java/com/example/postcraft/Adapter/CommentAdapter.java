@@ -83,9 +83,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
-        ReplyCommentAdapter catalogProductAdapter = new ReplyCommentAdapter(comment.getReplycommentList(),context);
+        ReplyCommentAdapter replyCommentAdapter = new ReplyCommentAdapter(comment.getReplycommentList(),context);
         holder.rcvReply.setLayoutManager(layoutManager);
-        holder.rcvReply.setAdapter(catalogProductAdapter);
+        holder.rcvReply.setAdapter(replyCommentAdapter);
 
 
 
@@ -103,7 +103,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView userProfile;
         TextView userName,tvComment,tvEmail,tvReply,tvReplyCount;
-        ImageView comment;
+        ImageView comment,delete;
         RecyclerView rcvReply;
 
         public ViewHolder(@NonNull View itemView) {
@@ -116,6 +116,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             rcvReply = itemView.findViewById(R.id.rcvReply);
             tvReplyCount = itemView.findViewById(R.id.tvReplyCount);
             comment = itemView.findViewById(R.id.comment);
+            delete = itemView.findViewById(R.id.delete);
         }
     }
 }

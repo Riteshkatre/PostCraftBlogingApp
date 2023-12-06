@@ -87,8 +87,7 @@ public class CommentResponse implements Serializable, Parcelable
         return  0;
     }
 
-    public class Comment implements Serializable
-    {
+    public class Comment implements Serializable {
 
         @SerializedName("comment_id")
         @Expose
@@ -246,13 +245,18 @@ public class CommentResponse implements Serializable, Parcelable
         }
 
         public int describeContents() {
-            return  0;
+            return 0;
         }
 
 
+        public class Replycomment implements Serializable {
 
-    public class Replycomment {
-
+            @SerializedName("post_id")
+            @Expose
+            private String postId;
+            @SerializedName("comment_id")
+            @Expose
+            private String commentId;
             @SerializedName("reply_comment_id")
             @Expose
             private String replyCommentId;
@@ -271,42 +275,65 @@ public class CommentResponse implements Serializable, Parcelable
             @SerializedName("reply_comment")
             @Expose
             private String replyComment;
-        private boolean isReplyVisible;
 
-        // ... other fields, constructors, getters, and setters
+            private final static long serialVersionUID = 8422045364575005588L;
 
-        public boolean isReplyVisible() {
-            return isReplyVisible;
-        }
-
-        public void setReplyVisible(boolean replyVisible) {
-            isReplyVisible = replyVisible;
-        }
+            @SuppressWarnings({
+                    "unchecked"
+            })
+            protected Replycomment(android.os.Parcel in) {
+                this.postId = ((String) in.readValue((String.class.getClassLoader())));
+                this.commentId = ((String) in.readValue((String.class.getClassLoader())));
+                this.replyCommentId = ((String) in.readValue((String.class.getClassLoader())));
+                this.userId = ((String) in.readValue((String.class.getClassLoader())));
+                this.firstName = ((String) in.readValue((String.class.getClassLoader())));
+                this.email = ((String) in.readValue((String.class.getClassLoader())));
+                this.profileImage = ((String) in.readValue((String.class.getClassLoader())));
+                this.replyComment = ((String) in.readValue((String.class.getClassLoader())));
+            }
 
             /**
              * No args constructor for use in serialization
-             *
              */
             public Replycomment() {
             }
 
             /**
-             *
              * @param firstName
              * @param replyCommentId
              * @param replyComment
+             * @param commentId
+             * @param postId
              * @param profileImage
              * @param userId
              * @param email
              */
-            public Replycomment(String replyCommentId, String userId, String firstName, String email, String profileImage, String replyComment) {
+            public Replycomment(String postId, String commentId, String replyCommentId, String userId, String firstName, String email, String profileImage, String replyComment) {
                 super();
+                this.postId = postId;
+                this.commentId = commentId;
                 this.replyCommentId = replyCommentId;
                 this.userId = userId;
                 this.firstName = firstName;
                 this.email = email;
                 this.profileImage = profileImage;
                 this.replyComment = replyComment;
+            }
+
+            public String getPostId() {
+                return postId;
+            }
+
+            public void setPostId(String postId) {
+                this.postId = postId;
+            }
+
+            public String getCommentId() {
+                return commentId;
+            }
+
+            public void setCommentId(String commentId) {
+                this.commentId = commentId;
             }
 
             public String getReplyCommentId() {
@@ -357,9 +384,22 @@ public class CommentResponse implements Serializable, Parcelable
                 this.replyComment = replyComment;
             }
 
+            public void writeToParcel(android.os.Parcel dest, int flags) {
+                dest.writeValue(postId);
+                dest.writeValue(commentId);
+                dest.writeValue(replyCommentId);
+                dest.writeValue(userId);
+                dest.writeValue(firstName);
+                dest.writeValue(email);
+                dest.writeValue(profileImage);
+                dest.writeValue(replyComment);
+            }
+
+            public int describeContents() {
+                return 0;
+            }
         }
+
+
     }
-
-
-
 }
