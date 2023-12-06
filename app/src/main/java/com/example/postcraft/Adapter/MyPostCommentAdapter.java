@@ -24,16 +24,35 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdapter.ViewHolder>{
     List<CommentResponse.Comment> commentList;
     Context context;
+    PostClick postClick;
 
+
+
+    public interface PostClick {
+        void DeleteClick(CommentResponse.Comment post);
+    }
+    public void SetUpInterface(MyPostCommentAdapter.PostClick postClick1){
+        this.postClick = postClick1;
+    }
     public MyPostCommentAdapter(List<CommentResponse.Comment> commentList, Context context) {
         this.commentList = commentList;
         this.context = context;
     }
 
+    public void removeCommentById(String commentId) {
+        for (CommentResponse.Comment comment : commentList) {
+            if (comment.getCommentId().equals(commentId)) {
+                commentList.remove(comment);
+                break;
+            }
+        }
+    }
+
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_my_post_comment, parent, false);
         return new MyPostCommentAdapter.ViewHolder(view);
     }
 
@@ -42,6 +61,7 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
         CommentResponse.Comment comment=commentList.get(position);
         holder.userName.setText(comment.getFirstName());
         holder.tvComment.setText(comment.getCommentText());
+        holder.tvEmail.setText(comment.getEmail());
         try {
             Glide.with(context).load(comment.getProfileImage()).placeholder(R.drawable.background).error(R.drawable.ic_launcher_foreground).into(holder.userProfile);
         } catch (Exception e) {
@@ -65,7 +85,7 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
             }
         });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
-        ReplyCommentAdapter catalogProductAdapter = new ReplyCommentAdapter(comment.getReplycommentList(),context);
+        ReplayMyCommentAdapter catalogProductAdapter = new ReplayMyCommentAdapter(comment.getReplycommentList(),context);
         holder.rcvReply.setLayoutManager(layoutManager);
         holder.rcvReply.setAdapter(catalogProductAdapter);
 
@@ -84,6 +104,13 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
             notifyItemChanged(holder.getAdapterPosition());
 
         });
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postClick.DeleteClick(comment);
+
+            }
+        });
     }
 
     @Override
@@ -93,7 +120,7 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView userProfile;
-        ImageView comment;
+        ImageView comment,delete;
         TextView userName, tvEmail, tvComment,tvReply,tvReplyCount;
         RecyclerView rcvReply;
         public ViewHolder(@NonNull View itemView) {
@@ -106,6 +133,7 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
             rcvReply = itemView.findViewById(R.id.rcvReply);
             tvReplyCount = itemView.findViewById(R.id.tvReplyCount);
             comment = itemView.findViewById(R.id.comment);
+            delete = itemView.findViewById(R.id.delete);
         }
     }
 }

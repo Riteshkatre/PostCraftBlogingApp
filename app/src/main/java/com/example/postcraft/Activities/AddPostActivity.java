@@ -75,7 +75,7 @@ public class AddPostActivity extends AppCompatActivity {
 
     SharedPreference sharedPreference;
 
-    private MultipartBody.Part fileToUpload;
+
 
     Intent i;
 
@@ -115,11 +115,7 @@ public class AddPostActivity extends AppCompatActivity {
                 // Do something with the selected image URI
                 imgPost.setImageURI(selectedImageUri);
                 currentPhotoPath = getPathFromUri(selectedImageUri);
-                if (!currentPhotoPath.isEmpty()) {
-                    File file = new File(currentPhotoPath);
-                    RequestBody rbPhoto = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                   fileToUpload = MultipartBody.Part.createFormData("post_image", file.getName(), rbPhoto);
-                }
+                CurentPhotoFile=new File(currentPhotoPath);
 
             } else {
                 Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();

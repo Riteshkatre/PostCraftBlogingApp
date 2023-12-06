@@ -46,7 +46,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_5sdp"
                         android:hint="youremail@gmail.com"/>
+
+
                 </LinearLayout>
+              <!--  <ImageView
+                    android:id="@+id/delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/delete"/>-->
             </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"

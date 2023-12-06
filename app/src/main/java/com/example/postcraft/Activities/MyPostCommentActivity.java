@@ -1,5 +1,6 @@
 package com.example.postcraft.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.postcraft.Adapter.MyPostCommentAdapter;
+import com.example.postcraft.Adapter.ReplayMyCommentAdapter;
 import com.example.postcraft.Network.RestCall;
 import com.example.postcraft.Network.RestClient;
 import com.example.postcraft.NetworkResponse.CommentResponse;
@@ -37,6 +40,8 @@ public class MyPostCommentActivity extends AppCompatActivity {
     Intent i;
 
     MyPostCommentAdapter myPostCommentAdapter;
+
+    ReplayMyCommentAdapter replayMyCommentAdapter;
 
     TextView tvNoData;
 
@@ -105,20 +110,50 @@ public class MyPostCommentActivity extends AppCompatActivity {
                             if (commentResponse != null && commentResponse.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
                                 tvNoData.setVisibility(View.GONE);
 
+
+
                                 myPostCommentAdapter = new MyPostCommentAdapter(commentResponse.getCommentList(), MyPostCommentActivity.this);
                                 LinearLayoutManager layoutManager = new LinearLayoutManager(MyPostCommentActivity.this);
                                 rcv.setLayoutManager(layoutManager);
                                 rcv.setAdapter(myPostCommentAdapter);
                                 getReplyComment();
 
-                            } else {
-                                tvNoData.setVisibility(View.VISIBLE);
+                                myPostCommentAdapter.SetUpInterface(new MyPostCommentAdapter.PostClick() {
+                                    @Override
+                                    public void DeleteClick(CommentResponse.Comment post) {
+
+                                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MyPostCommentActivity.this);
+                                        alertDialog.setTitle("Alert!!");
+                                        alertDialog.setMessage("Are you sure, you want to delete  Comment ");
+
+                                        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                DeleteComment(post.getCommentId());
+                                                dialogInterface.dismiss();
+                                            }
+                                        });
+
+                                        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialogInterface.dismiss();
+                                            }
+                                        });
+                                        alertDialog.show();
+
+
+                                    }
+                                });
+
                             }
                         });
                     }
 
                 });
     }
+
+
     public void getReplyComment() {
         tvNoData.setVisibility(View.VISIBLE);
         swipeRefresh.setRefreshing(false);
@@ -158,5 +193,36 @@ public class MyPostCommentActivity extends AppCompatActivity {
                 });
     }
 
+
+    public  void  DeleteComment(String CommentId){
+        swipeRefresh.setRefreshing(true);
+        restCall.user_comment_delete("user_comment_delete",sharedPreference.getStringvalue("USER_ID"),CommentId,PostId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CommentResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("##", e.getLocalizedMessage());
+                            Toast.makeText(MyPostCommentActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(CommentResponse commentResponse) {
+                        if (commentResponse != null && commentResponse.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
+                            myPostCommentAdapter.removeCommentById(CommentId);
+                            myPostCommentAdapter.notifyDataSetChanged();
+                            swipeRefresh.setRefreshing(false);
+                            getComment();
+
+                        }
+
+                    }
+                });
+    }
 
 }

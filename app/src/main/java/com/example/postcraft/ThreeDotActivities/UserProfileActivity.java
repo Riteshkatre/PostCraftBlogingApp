@@ -2,8 +2,11 @@ package com.example.postcraft.ThreeDotActivities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -51,12 +54,16 @@ public class UserProfileActivity extends AppCompatActivity {
     CircleImageView profileImage;
     private static final int REQUEST_CAMERA_PERMISSION = 101;
     ActivityResultLauncher<Intent> cameraLauncher;
+    ActivityResultLauncher<Intent> galleryLauncher;
+    int REQUEST_GALLERY_PERMISSION = 102;
     String currentPhotoPath = "";
     private File currentPhotoFile;
     Button btnDone;
     Tools tools;
     SharedPreference sharedPreference;
     RestCall restCall;
+    private Uri selectedImageUri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,67 +98,51 @@ public class UserProfileActivity extends AppCompatActivity {
 
         });
 
-
-
-
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
-                profileImage.setImageURI(Uri.parse(currentPhotoPath));
+                if (currentPhotoFile != null) {
+                    selectedImageUri = Uri.fromFile(currentPhotoFile);
+                    profileImage.setImageURI(selectedImageUri);
+                    currentPhotoPath = currentPhotoFile.getAbsolutePath();
+                }
+            } else {
+                Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                selectedImageUri = result.getData().getData();
+                profileImage.setImageURI(selectedImageUri);
+                currentPhotoPath = getRealPathFromUri(selectedImageUri);
             } else {
                 Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
             }
         });
 
         imgPhotoClick.setOnClickListener(v -> {
-            try {
-                currentPhotoPath = "";
-                if (checkCameraPermission()) {
-                    openCamera();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            showImagePickerDialog();
         });
 
 
         back.setOnClickListener(v -> finish());
     }
 
-    private boolean checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-            return false;
-        }
-        return true;
-    }
-
-    private void openCamera() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-
-                ex.printStackTrace();
-            }
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "com.example.postcraft", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                cameraLauncher.launch(takePictureIntent);
-            }
+    private String getRealPathFromUri(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if (cursor == null) {
+            return uri.getPath();
+        } else {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String path = cursor.getString(column_index);
+            cursor.close();
+            return path;
         }
     }
 
-    private File createImageFile() throws IOException {
-        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
-        currentPhotoFile = image;
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
 
 
 
@@ -227,19 +218,21 @@ public class UserProfileActivity extends AppCompatActivity {
                                 if (loginResponce != null && loginResponce.getStatus() != null) {
                                     if (loginResponce.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
                                         if (currentPhotoFile != null && currentPhotoPath != null) {
-                                            firstName.setText(bfirstName.toString().trim());
-                                            lastName.setText(blastName.toString().trim());
-                                            Toast.makeText(UserProfileActivity.this, ""+loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
-                                            finish();
-                                        }
+                                            firstName.setText(" ");
+                                            lastName.setText(" ");
 
+                                            sharedPreference.setStringvalue("FIRST_NAME",loginResponce.getFirstName());
+                                           sharedPreference.setStringvalue("LAST_NAME",loginResponce.getLastName());
+                                         sharedPreference.setStringvalue("PHOTO",loginResponce.getProfileImage());
+                                        }
+                                        Toast.makeText(UserProfileActivity.this, loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
+                                        finish();
                                     } else {
                                         Toast.makeText(UserProfileActivity.this, "Not able to edit", Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
 
-
-                                    Toast.makeText(UserProfileActivity.this, ""+loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(UserProfileActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
                                     finish();
                                 }
                             }
@@ -248,4 +241,73 @@ public class UserProfileActivity extends AppCompatActivity {
 
                 });
     }
+    private void showImagePickerDialog() {
+        android.app.AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose Image Source");
+        builder.setItems(new CharSequence[]{"Camera", "Gallery"}, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        if (checkCameraPermission()) {
+                            openCamera();
+                        }
+                        break;
+                    case 1:
+                        if (checkGalleryPermission()) {
+                            openGallery();
+                        }
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }    private boolean checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkGalleryPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_GALLERY_PERMISSION);
+            return false;
+        }
+        return true;
+    }
+    private void openGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryLauncher.launch(galleryIntent);
+    }
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            if (photoFile != null) {
+                Uri photoUri = FileProvider.getUriForFile(this, "com.example.postcraft.provider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                cameraLauncher.launch(takePictureIntent);
+            }
+        }
+    }
+
+
+
+    private File createImageFile() throws IOException {
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        currentPhotoFile = image;
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
 }
