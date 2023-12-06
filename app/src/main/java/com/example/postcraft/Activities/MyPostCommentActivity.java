@@ -119,6 +119,8 @@ public class MyPostCommentActivity extends AppCompatActivity {
 
 
 
+
+
                                 myPostCommentAdapter = new MyPostCommentAdapter(commentResponse.getCommentList(), MyPostCommentActivity.this);
                                 LinearLayoutManager layoutManager = new LinearLayoutManager(MyPostCommentActivity.this);
                                 rcv.setLayoutManager(layoutManager);
