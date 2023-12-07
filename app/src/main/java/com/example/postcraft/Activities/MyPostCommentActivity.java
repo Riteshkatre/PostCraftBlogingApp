@@ -57,7 +57,6 @@ public class MyPostCommentActivity extends AppCompatActivity {
         rcv = findViewById(R.id.rcv);
         back = findViewById(R.id.back);
         tvNoData = findViewById(R.id.tvNoData);
-        tvNoData.setVisibility(View.VISIBLE);
         swipeRefresh = findViewById(R.id.swipeRefresh);
         sharedPreference = new SharedPreference(this);
         tools=new Tools(this);
@@ -86,7 +85,7 @@ public class MyPostCommentActivity extends AppCompatActivity {
 
 
     public void getComment() {
-
+tvNoData.setVisibility(View.VISIBLE);
         swipeRefresh.setRefreshing(false);
         restCall.get_user_comment("get_user_comment", sharedPreference.getStringvalue("USER_ID"), categoryId, PostId)
                 .subscribeOn(Schedulers.io())
@@ -193,8 +192,6 @@ public class MyPostCommentActivity extends AppCompatActivity {
                                 tools.stopLoading();
 
 
-                            } else {
-                                tvNoData.setVisibility(View.VISIBLE);
                             }
                         });
                     }

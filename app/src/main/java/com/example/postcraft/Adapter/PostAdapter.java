@@ -40,7 +40,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Post model = postList.get(position);
-        holder.userName.setText(model.getFirstName());
+        holder.userName.setText(model.getFirstName()+" "+model.getLastName());
         holder.tvDesc.setText(model.getPostDescription());
         try {
             Glide.with(context).load(model.getPostImage()).placeholder(R.drawable.background).error(R.drawable.ic_launcher_foreground).into(holder.postImage);

@@ -42,7 +42,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CommentResponse.Comment comment=commentList.get(position);
-        holder.userName.setText(comment.getFirstName());
+        holder.userName.setText(comment.getFirstName()+" "+comment.getLastName());
         holder.tvComment.setText(comment.getCommentText());
         try {
             Glide.with(context).load(comment.getProfileImage()).placeholder(R.drawable.background).error(R.drawable.ic_launcher_foreground).into(holder.userProfile);
