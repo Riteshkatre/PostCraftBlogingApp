@@ -37,6 +37,7 @@ import com.example.postcraft.NetworkResponse.Tools;
 import com.example.postcraft.NetworkResponse.UserResponce;
 import com.example.postcraft.NetworkResponse.VeriableBag;
 import com.example.postcraft.R;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.io.IOException;
@@ -281,14 +282,19 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isValidEmail(CharSequence target) {
         return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
+
+
+
+
     public void user_registration() {
         tools.showLoading();
         RequestBody tag = RequestBody.create(MediaType.parse("text/plain"), "user_registration");
         RequestBody first_name = RequestBody.create(MediaType.parse("text/plain"), etFirstName.getText().toString().trim());
         RequestBody last_name = RequestBody.create(MediaType.parse("text/plain"), etLastName.getText().toString().trim());
         RequestBody email = RequestBody.create(MediaType.parse("text/plain"), etEmail.getText().toString().trim());
+        RequestBody password = RequestBody.create(MediaType.parse("text/plain"), etPassword.getText().toString().trim());
+
         MultipartBody.Part fileToUpload = null;
-        RequestBody password = RequestBody.create(MediaType.parse("text/plain"),etPassword.getText().toString().trim());
 
         if (selectedImageUri != null) {
             try {
@@ -303,56 +309,56 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
 
-        restCall.user_registration(tag, first_name, last_name, email,fileToUpload,password)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.newThread())
-                .subscribe(new Subscriber<UserResponce>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        runOnUiThread(new Runnable() {
+        // Get FCM Token
+        MultipartBody.Part finalFileToUpload = fileToUpload;
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                String token = task.getResult();
+                restCall.user_registration(tag, first_name, last_name, email, finalFileToUpload, password, token)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.newThread())
+                        .subscribe(new Subscriber<UserResponce>() {
                             @Override
-                            public void run() {
-                                tools.stopLoading();
-                                Log.e("API Error", e.getMessage());
-                                Toast.makeText(RegisterActivity.this, "this is wrong", Toast.LENGTH_SHORT).show();
+                            public void onCompleted() {
+                            }
 
+                            @Override
+                            public void onError(Throwable e) {
+                                runOnUiThread(() -> {
+                                    tools.stopLoading();
+                                    Log.e("API Error", e.getMessage());
+                                    Toast.makeText(RegisterActivity.this, "An error occurred", Toast.LENGTH_SHORT).show();
+                                });
+                            }
+
+                            @Override
+                            public void onNext(UserResponce userResponce) {
+                                runOnUiThread(() -> {
+                                    tools.stopLoading();
+                                    if (userResponce != null && userResponce.getStatus() != null
+                                            && userResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
+                                        if (currentPhotoFile != null && currentPhotoPath != null) {
+                                            Toast.makeText(RegisterActivity.this, "" + userResponce.getMessage(), Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(RegisterActivity.this, LogingActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    } else {
+                                        // Log the response for debugging
+                                        Log.e("API Response", "Empty or invalid response: " + userResponce);
+                                        Toast.makeText(RegisterActivity.this, "" + userResponce.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         });
-                    }
-                    @Override
-                    public void onNext(UserResponce userResponce) {
-                        try {
-                            runOnUiThread(() -> {
-                                tools.stopLoading();
-                                if (userResponce != null && userResponce.getStatus() != null
-                                        && userResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
-                                    if (currentPhotoFile != null && currentPhotoPath != null) {
-                                        Toast.makeText(RegisterActivity.this, "" + userResponce.getMessage(), Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(RegisterActivity.this, LogingActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                } else {
-                                    // Log the response for debugging
-                                    Log.e("API Response", "Empty or invalid response: " + userResponce);
-                                    Toast.makeText(RegisterActivity.this, "" + userResponce.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e("Redirect Error", "Error during redirection: " + e.getMessage());
-                        }
-                    }
-
-
+            } else {
+                runOnUiThread(() -> {
+                    tools.stopLoading();
+                    Toast.makeText(RegisterActivity.this, "Failed to get FCM token", Toast.LENGTH_SHORT).show();
                 });
-
-}
+            }
+        });
+    }
 
 
     private void togglePasswordVisibility() {

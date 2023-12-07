@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
+import com.example.postcraft.Activities.HomeActivity;
 import com.example.postcraft.Activities.SharedPreference;
 import com.example.postcraft.Network.RestCall;
 import com.example.postcraft.Network.RestClient;
@@ -116,6 +117,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 selectedImageUri = result.getData().getData();
                 profileImage.setImageURI(selectedImageUri);
                 currentPhotoPath = getRealPathFromUri(selectedImageUri);
+                currentPhotoFile=new File(currentPhotoPath);
             } else {
                 Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
             }
@@ -143,41 +145,30 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void updateUIAfterEdit(String newFirstName, String newLastName, String newPhoto) {
+        runOnUiThread(() -> {
+            firstName.setText(newFirstName);
+            lastName.setText(newLastName);
+
+
+            Glide.with(UserProfileActivity.this).load(newPhoto).error(R.drawable.users).into(profileImage);
+
+            Toast.makeText(UserProfileActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+        });
+    }
 
 
 
     private void EditUserCall() {
+        String firstNameValue = firstName.getText().toString();
+        String lastNameValue = lastName.getText().toString();
 
-        String firstNameValue = firstName.getText().toString().trim();
-        String lastNameValue = lastName.getText().toString().trim();
-
-        if (firstNameValue.isEmpty()) {
-            firstName.setError("FirstName cannot be empty");
-            firstName.requestFocus();
-            tools.stopLoading();
-            return;
-        }
-
-        else if (lastNameValue.isEmpty()) {
-            lastName.setError("LastName cannot be empty");
-            lastName.requestFocus();
-            tools.stopLoading();
-            return;
-        }
-
-
-        else if (currentPhotoFile == null || currentPhotoPath.isEmpty()) {
-            Toast.makeText(this, "Please select a new profile photo", Toast.LENGTH_SHORT).show();
-            tools.stopLoading();
-            return;
-        }
-
-        tools.showLoading();
         RequestBody tag = RequestBody.create(MediaType.parse("text/plain"), "user_edit_profile");
         RequestBody bUserId = RequestBody.create(MediaType.parse("text/plain"), sharedPreference.getStringvalue("USER_ID"));
-        RequestBody bfirstName = RequestBody.create(MediaType.parse("text/plain"),firstName.getText().toString().trim());
-        RequestBody blastName = RequestBody.create(MediaType.parse("text/plain"), lastName.getText().toString().trim());
-        MultipartBody.Part fileToUpload=null    ;
+        RequestBody bfirstName = RequestBody.create(MediaType.parse("text/plain"), firstNameValue);
+        RequestBody blastName = RequestBody.create(MediaType.parse("text/plain"), lastNameValue);
+        MultipartBody.Part fileToUpload = null;
+
         if (currentPhotoFile != null && currentPhotoPath != null) {
             try {
                 StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -189,56 +180,39 @@ public class UserProfileActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        restCall.user_edit_profile(tag,bUserId,bfirstName,blastName,fileToUpload)
+
+        restCall.user_edit_profile(tag, bUserId, bfirstName, blastName, fileToUpload)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
                 .subscribe(new Subscriber<LoginResponce>() {
                     @Override
                     public void onCompleted() {
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                tools.stopLoading();
-                                Toast.makeText(UserProfileActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                            }
+                        runOnUiThread(() -> {
+                            Toast.makeText(UserProfileActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         });
                     }
 
                     @Override
                     public void onNext(LoginResponce loginResponce) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                tools.stopLoading();
-                                if (loginResponce != null && loginResponce.getStatus() != null) {
-                                    if (loginResponce.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
-                                        if (currentPhotoFile != null && currentPhotoPath != null) {
-                                            firstName.setText(" ");
-                                            lastName.setText(" ");
-
-                                            sharedPreference.setStringvalue("FIRST_NAME",loginResponce.getFirstName());
-                                           sharedPreference.setStringvalue("LAST_NAME",loginResponce.getLastName());
-                                         sharedPreference.setStringvalue("PHOTO",loginResponce.getProfileImage());
-                                        }
-                                        Toast.makeText(UserProfileActivity.this, loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    } else {
-                                        Toast.makeText(UserProfileActivity.this, "Not able to edit", Toast.LENGTH_SHORT).show();
-                                    }
-                                } else {
-
-                                    Toast.makeText(UserProfileActivity.this, "Edit Successful", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
+                        runOnUiThread(() -> {
+                            if (loginResponce != null && loginResponce.getStatus() != null && loginResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
+                                Toast.makeText(UserProfileActivity.this, "Edited", Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(UserProfileActivity.this, HomeActivity.class);
+                                sharedPreference.setStringvalue("FIRST_NAME", loginResponce.getFirstName());
+                                sharedPreference.setStringvalue("LAST_NAME", loginResponce.getLastName());
+                                sharedPreference.setStringvalue("PHOTO", loginResponce.getProfileImage());
+                                updateUIAfterEdit(loginResponce.getFirstName(), loginResponce.getLastName(), loginResponce.getProfileImage());
+                                startActivity(i);
+                                finish();
+                            } else {
+                                Toast.makeText(UserProfileActivity.this, "" + loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
-
                 });
     }
     private void showImagePickerDialog() {

@@ -28,7 +28,8 @@ public interface RestCall {
             @Part("last_name")RequestBody last_name,
             @Part("email")RequestBody email,
             @Part MultipartBody.Part profile_image,
-            @Part("password")RequestBody password);
+            @Part("password")RequestBody password,
+            @Part("device_token") String device_token);
 
 
     @FormUrlEncoded

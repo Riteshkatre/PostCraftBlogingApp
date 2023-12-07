@@ -88,7 +88,6 @@ public class MyPostCommentActivity extends AppCompatActivity {
     public void getComment() {
 
         swipeRefresh.setRefreshing(false);
-        tools.showLoading();
         restCall.get_user_comment("get_user_comment", sharedPreference.getStringvalue("USER_ID"), categoryId, PostId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -166,7 +165,7 @@ public class MyPostCommentActivity extends AppCompatActivity {
     public void getReplyComment() {
 
         swipeRefresh.setRefreshing(false);
-        tools.showLoading();
+
         restCall.get_reply_comment("get_reply_comment")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -179,8 +178,6 @@ public class MyPostCommentActivity extends AppCompatActivity {
                     public void onError(Throwable e) {
                         runOnUiThread(() -> {
                             tools.stopLoading();
-
-
                             Log.e("##", e.getLocalizedMessage());
                             Toast.makeText(MyPostCommentActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         });
