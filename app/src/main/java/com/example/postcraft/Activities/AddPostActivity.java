@@ -268,7 +268,7 @@ public class AddPostActivity extends AppCompatActivity {
                         runOnUiThread(() -> {
                             tools.stopLoading();
                             Log.e("API Error", e.getMessage());
-                            Toast.makeText(AddPostActivity.this, " Post Is Uploaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddPostActivity.this, " API Error ", Toast.LENGTH_SHORT).show();
                             finish();
                         });
                     }
@@ -281,7 +281,7 @@ public class AddPostActivity extends AppCompatActivity {
                             if (userResponce != null && userResponce.getStatus() != null
                                     && userResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
                                 if (CurentPhotoFile != null && currentPhotoPath != null) {
-                                    Toast.makeText(AddPostActivity.this, "Post Is Uploaded", Toast.LENGTH_SHORT).show();
+
                                     showNotification("New Post", "Uploaded a new post!!");
                                 }
                             } else {

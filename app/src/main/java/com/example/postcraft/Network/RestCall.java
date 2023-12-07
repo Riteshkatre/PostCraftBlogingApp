@@ -132,6 +132,10 @@ public interface RestCall {
             @Field("post_id") String post_id);
 
 
-
+    @FormUrlEncoded
+    @POST("user.php")
+    Single<UserResponce> user_delete(
+            @Field("tag") String tag,
+            @Field("user_id") String user_id);
 
 }

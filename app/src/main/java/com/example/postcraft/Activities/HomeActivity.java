@@ -160,6 +160,7 @@ public class HomeActivity extends AppCompatActivity {
             } else if (itemId == R.id.menu_item2) {
                 Intent i = new Intent(HomeActivity.this, SettingsActivity.class);
                 startActivity(i);
+                finish();
             } else if (itemId == R.id.menu_item4) {
                 Intent i = new Intent(HomeActivity.this, ContactUsActivity.class);
                 startActivity(i);

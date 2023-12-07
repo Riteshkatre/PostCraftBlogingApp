@@ -1,5 +1,16 @@
 package com.example.postcraft.ThreeDotActivities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -8,16 +19,21 @@ import androidx.biometric.BiometricPrompt;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Vibrator;
-import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-
+import com.example.postcraft.Activities.HomeActivity;
+import com.example.postcraft.Activities.MainActivity;
+import com.example.postcraft.Activities.SharedPreference;
+import com.example.postcraft.Network.RestCall;
+import com.example.postcraft.Network.RestClient;
+import com.example.postcraft.NetworkResponse.Tools;
+import com.example.postcraft.NetworkResponse.UserResponce;
+import com.example.postcraft.NetworkResponse.VeriableBag;
 import com.example.postcraft.R;
 
 import java.util.concurrent.Executor;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class SettingsActivity extends AppCompatActivity {
     CardView back;
@@ -28,6 +44,13 @@ public class SettingsActivity extends AppCompatActivity {
     BiometricPrompt.PromptInfo promptInfo;
     RelativeLayout lyt;
     private SharedPreferences sharedPreferences;
+
+    ImageView delete;
+
+    RestCall restCall;
+    Tools tools;
+
+    SharedPreference sharedPreference;
 
 
 
@@ -40,10 +63,16 @@ public class SettingsActivity extends AppCompatActivity {
         SwitchLock=findViewById(R.id.SwitchLock);
 
         lyt = findViewById(R.id.lyt);
+        delete = findViewById(R.id.delete);
 
         sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         isBiometricEnabled = sharedPreferences.getBoolean(SWITCH_STATE_KEY, false);
         SwitchLock.setChecked(isBiometricEnabled);
+
+        sharedPreference=new SharedPreference(this);
+        restCall = RestClient.createService(RestCall.class, VeriableBag.BASE_URL, VeriableBag.API_KEY);
+        tools=new Tools(this);
+
 
 
         SwitchLock.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -66,7 +95,19 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
 
-        back.setOnClickListener(v -> finish());
+        back.setOnClickListener(v -> {
+          Intent i= new Intent(SettingsActivity.this, HomeActivity.class);
+          startActivity(i);
+
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeleteConfirmationDialog();
+
+            }
+        });
 
     }
 
@@ -112,5 +153,76 @@ public class SettingsActivity extends AppCompatActivity {
     private void disableBiometricAuthentication() {
 
         Toast.makeText(this, "Biometric authentication disabled", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure?")
+                .setMessage("Deleting your account will permanently remove all your data. Are you sure you want to proceed?")
+                .setCancelable(false)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DeleteAccountApi();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Dismiss the dialog
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+  private  void DeleteAccountApi(){
+        tools.showLoading();
+        restCall.user_delete("user_delete",sharedPreference.getStringvalue("USER_ID"))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<UserResponce>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        runOnUiThread(() -> {
+                            tools.stopLoading();
+                            Log.e("##", e.getLocalizedMessage());
+                            Toast.makeText(SettingsActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        });
+
+                    }
+
+                    @Override
+                    public void onNext(UserResponce userResponce) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (userResponce != null && userResponce.getStatus() != null && userResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)){
+                                    sharedPreference.clearPref();
+                                    sharedPreference.setLoggedIn(false);
+                                    Intent i=new Intent(SettingsActivity.this, MainActivity.class);
+                                    startActivity(i);
+                                    finish();
+
+                                }
+                            }
+                        });
+
+                    }
+                });
+  }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i= new Intent(SettingsActivity.this, HomeActivity.class);
+        startActivity(i);
+        finish();
     }
 }

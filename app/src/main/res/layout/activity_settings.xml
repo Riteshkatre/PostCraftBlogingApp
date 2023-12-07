@@ -76,6 +76,8 @@
         android:layout_below="@+id/ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:weightSum="2"
         android:layout_marginTop="@dimen/_31ssp"
         android:layout_marginLeft="@dimen/_5ssp"
         android:orientation="horizontal">
@@ -84,20 +86,48 @@
             android:layout_height="wrap_content"
             android:text="Lock screen"
             android:textColor="@color/black"
+            android:layout_weight="0.62"
             android:textSize="@dimen/_18ssp"
             android:fontFamily="@font/sofia_pro_black"/>
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/SwitchLock"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_weight="1"
+            android:layout_gravity="" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll2"
+        android:layout_below="@+id/ll1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_31ssp"
+
+        android:weightSum="2"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginRight="@dimen/_7ssp"
-            />
+            android:text="Delete Account"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_18ssp"
+            android:layout_weight="1"
+            android:fontFamily="@font/sofia_pro_black"/>
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/delete"/>
+
     </LinearLayout>
 
 
+
     <androidx.cardview.widget.CardView
-        android:layout_below="@+id/ll1"
+        android:layout_below="@+id/ll2"
         android:layout_width="match_parent"
         android:layout_marginLeft="@dimen/_7ssp"
         android:layout_marginTop="@dimen/_31ssp"

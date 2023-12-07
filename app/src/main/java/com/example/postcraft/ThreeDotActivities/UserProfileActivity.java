@@ -160,8 +160,15 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
     private void EditUserCall() {
+        tools.showLoading();
         String firstNameValue = firstName.getText().toString();
         String lastNameValue = lastName.getText().toString();
+
+        if (currentPhotoFile == null || currentPhotoPath == null) {
+            tools.stopLoading();
+            Toast.makeText(UserProfileActivity.this, "Please select a profile photo", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         RequestBody tag = RequestBody.create(MediaType.parse("text/plain"), "user_edit_profile");
         RequestBody bUserId = RequestBody.create(MediaType.parse("text/plain"), sharedPreference.getStringvalue("USER_ID"));
@@ -191,6 +198,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
+                        tools.stopLoading();
                         runOnUiThread(() -> {
                             Toast.makeText(UserProfileActivity.this, "" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         });
@@ -198,9 +206,9 @@ public class UserProfileActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(LoginResponce loginResponce) {
+                        tools.stopLoading();
                         runOnUiThread(() -> {
                             if (loginResponce != null && loginResponce.getStatus() != null && loginResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
-                                Toast.makeText(UserProfileActivity.this, "Edited", Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(UserProfileActivity.this, HomeActivity.class);
                                 sharedPreference.setStringvalue("FIRST_NAME", loginResponce.getFirstName());
                                 sharedPreference.setStringvalue("LAST_NAME", loginResponce.getLastName());
