@@ -129,7 +129,7 @@ public class CommentActivity extends AppCompatActivity {
                                     // If there are comments, hide tvNoData
                                     tvNoData.setVisibility(View.GONE);
 
-                                    commentAdapter = new CommentAdapter(commentResponse.getCommentList(), CommentActivity.this);
+                                    commentAdapter = new CommentAdapter(commentResponse.getCommentList(), CommentActivity.this, sharedPreference.getStringvalue("USER_ID"));
                                     LinearLayoutManager layoutManager = new LinearLayoutManager(CommentActivity.this);
                                     rcv.setLayoutManager(layoutManager);
                                     rcv.setAdapter(commentAdapter);
@@ -184,7 +184,7 @@ public class CommentActivity extends AppCompatActivity {
                             if (commentResponse != null && commentResponse.getStatus().equalsIgnoreCase(VeriableBag.SUCCESS_CODE)) {
                                 etv.setText("");
 
-                                commentAdapter = new CommentAdapter(commentResponse.getCommentList(), CommentActivity.this);
+                                commentAdapter = new CommentAdapter(commentResponse.getCommentList(), CommentActivity.this, sharedPreference.getStringvalue("USER_ID"));
                                 LinearLayoutManager layoutManager = new LinearLayoutManager(CommentActivity.this);
                                 rcv.setLayoutManager(layoutManager);
                                 rcv.setAdapter(commentAdapter);

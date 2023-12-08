@@ -110,6 +110,18 @@ public class CommentResponse implements Serializable, Parcelable
         @SerializedName("category_id")
         @Expose
         private String categoryId;
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        @SerializedName("user_id")
+        @Expose
+        private String userId;
         @SerializedName("comment_text")
         @Expose
         private String commentText;
