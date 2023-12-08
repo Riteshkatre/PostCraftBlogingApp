@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,8 +40,6 @@ import com.example.postcraft.ThreeDotActivities.HelpActivity;
 import com.example.postcraft.ThreeDotActivities.SettingsActivity;
 import com.example.postcraft.ThreeDotActivities.UserProfileActivity;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.messaging.FirebaseMessaging;
-
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -78,6 +77,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+
         setContentView(R.layout.activity_home);
         threeDotImageView = findViewById(R.id.threedot);
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -177,7 +178,6 @@ public class HomeActivity extends AppCompatActivity {
 
         getCategory();
 
-        getFCMToken();
     }
 
     @SuppressLint("MissingSuperCall")
@@ -287,17 +287,6 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    void getFCMToken(){
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                String token=task.getResult();
-                Log.i("token",token);
 
-            }
-
-
-        });
-
-    }
 
 }

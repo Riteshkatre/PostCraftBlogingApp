@@ -77,7 +77,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 i.putExtra("user_Profile", comment.getProfileImage());
                 i.putExtra("comment_Id", comment.getCommentId());
                 i.putExtra("email", comment.getEmail());
-
                 v.getContext().startActivity(i);
             }
         });
@@ -101,10 +100,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         boolean isCurrentUserComment = comment.getUserId().equals(currentUserID);
 
-        // Set visibility of delete button based on user ownership
         holder.delete.setVisibility(isCurrentUserComment ? View.VISIBLE : View.GONE);
 
-        // Set click listener for delete button
         holder.delete.setOnClickListener(v -> {
             if (isCurrentUserComment) {
 

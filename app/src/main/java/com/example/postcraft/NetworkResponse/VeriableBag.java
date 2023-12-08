@@ -10,5 +10,6 @@ public class VeriableBag {
     public static String SUCCESS_CODE="200";
     public static String User_id="user_id";
     public static String FAILL_CODE="201";
+    public static String Key_Token="token";
 
 }

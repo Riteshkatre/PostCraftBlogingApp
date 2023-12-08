@@ -29,7 +29,7 @@ public interface RestCall {
             @Part("email")RequestBody email,
             @Part MultipartBody.Part profile_image,
             @Part("password")RequestBody password,
-            @Part("device_token") String device_token);
+            @Part("device_token") RequestBody device_token);
 
 
     @FormUrlEncoded
@@ -37,7 +37,8 @@ public interface RestCall {
     Single<LoginResponce> user_login(
             @Field("tag") String tag,
             @Field("email") String email,
-            @Field("password") String password);
+            @Field("password") String password,
+            @Field("device_type") String device_type);
 
 
 

@@ -57,6 +57,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 i.putExtra("CategoryId", categoryListResponce.getCategoryId());
                 v.getContext().startActivity(i);
 
+
             }
         });
 

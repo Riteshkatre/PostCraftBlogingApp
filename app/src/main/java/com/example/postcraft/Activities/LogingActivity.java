@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,6 +48,8 @@ public class LogingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+
         setContentView(R.layout.activity_loging);
 
         btnLogin = findViewById(R.id.btnLogin);
@@ -92,8 +95,9 @@ public class LogingActivity extends AppCompatActivity {
 
 
     public void user_login(String email, String password) {
+        String type = "Android";
         tools.showLoading();
-        restCall.user_login("user_login", email, password)
+        restCall.user_login("user_login", email, password,type)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
                 .subscribe(new Subscriber<LoginResponce>() {

@@ -27,7 +27,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
-import com.example.postcraft.Activities.HomeActivity;
 import com.example.postcraft.Activities.SharedPreference;
 import com.example.postcraft.Network.RestCall;
 import com.example.postcraft.Network.RestClient;
@@ -209,12 +208,12 @@ public class UserProfileActivity extends AppCompatActivity {
                         tools.stopLoading();
                         runOnUiThread(() -> {
                             if (loginResponce != null && loginResponce.getStatus() != null && loginResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
-                                Intent i = new Intent(UserProfileActivity.this, HomeActivity.class);
+//                                Intent i = new Intent(UserProfileActivity.this, HomeActivity.class);
                                 sharedPreference.setStringvalue("FIRST_NAME", loginResponce.getFirstName());
                                 sharedPreference.setStringvalue("LAST_NAME", loginResponce.getLastName());
                                 sharedPreference.setStringvalue("PHOTO", loginResponce.getProfileImage());
                                 updateUIAfterEdit(loginResponce.getFirstName(), loginResponce.getLastName(), loginResponce.getProfileImage());
-                                startActivity(i);
+//                                startActivity(i);
                                 finish();
                             } else {
                                 Toast.makeText(UserProfileActivity.this, "" + loginResponce.getMessage(), Toast.LENGTH_SHORT).show();

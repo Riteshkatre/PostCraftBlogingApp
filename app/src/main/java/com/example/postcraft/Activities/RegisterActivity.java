@@ -18,6 +18,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,7 +38,6 @@ import com.example.postcraft.NetworkResponse.Tools;
 import com.example.postcraft.NetworkResponse.UserResponce;
 import com.example.postcraft.NetworkResponse.VeriableBag;
 import com.example.postcraft.R;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,13 +63,14 @@ public class RegisterActivity extends AppCompatActivity {
     ImageView showpassword;
     ImageView imgPhotoClick;
     CircleImageView imgUser;
+    SharedPreference sharedPreference;
 
     private static final int REQUEST_CAMERA_PERMISSION = 101;
 
     ActivityResultLauncher<Intent> cameraLauncher;
     ActivityResultLauncher<Intent> galleryLauncher;
     int REQUEST_GALLERY_PERMISSION = 102;
-    String currentPhotoPath = "";
+    String currentPhotoPath = "" , tokenId ;
     private File currentPhotoFile;
 
 
@@ -83,6 +84,8 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+
         setContentView(R.layout.activity_register);
         btnSignUp = findViewById(R.id.btnSignUp);
         etPassword = findViewById(R.id.etPassword);
@@ -95,6 +98,8 @@ public class RegisterActivity extends AppCompatActivity {
         imgUser = findViewById(R.id.imgUser);
         imgPhotoClick = findViewById(R.id.imgPhotoClick);
         tools=new Tools(this);
+        sharedPreference = new SharedPreference(RegisterActivity.this);
+        tokenId = sharedPreference.getStringvalue(VeriableBag.Key_Token);
 
 
         restCall = RestClient.createService(RestCall.class, VeriableBag.BASE_URL, VeriableBag.API_KEY);
@@ -293,6 +298,7 @@ public class RegisterActivity extends AppCompatActivity {
         RequestBody last_name = RequestBody.create(MediaType.parse("text/plain"), etLastName.getText().toString().trim());
         RequestBody email = RequestBody.create(MediaType.parse("text/plain"), etEmail.getText().toString().trim());
         RequestBody password = RequestBody.create(MediaType.parse("text/plain"), etPassword.getText().toString().trim());
+        RequestBody tokenIda = RequestBody.create(MediaType.parse("text/plain"), tokenId);
 
         MultipartBody.Part fileToUpload = null;
 
@@ -311,10 +317,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Get FCM Token
         MultipartBody.Part finalFileToUpload = fileToUpload;
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                String token = task.getResult();
-                restCall.user_registration(tag, first_name, last_name, email, finalFileToUpload, password, token)
+//        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                String token = task.getResult();
+//                /*String type = "Android";*/
+//
+                restCall.user_registration(tag, first_name, last_name, email, finalFileToUpload, password, tokenIda)
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.newThread())
                         .subscribe(new Subscriber<UserResponce>() {
@@ -349,16 +357,9 @@ public class RegisterActivity extends AppCompatActivity {
                                         Toast.makeText(RegisterActivity.this, "" + userResponce.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
-                            }
+                           }
                         });
-            } else {
-                runOnUiThread(() -> {
-                    tools.stopLoading();
-                    Toast.makeText(RegisterActivity.this, "Failed to get FCM token", Toast.LENGTH_SHORT).show();
-                });
             }
-        });
-    }
 
 
     private void togglePasswordVisibility() {
