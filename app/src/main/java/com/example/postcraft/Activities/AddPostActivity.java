@@ -263,6 +263,7 @@ public class AddPostActivity extends AppCompatActivity {
                     @Override
                     public void onCompleted() {
 
+
                     }
 
                     @Override
@@ -270,7 +271,7 @@ public class AddPostActivity extends AppCompatActivity {
                         runOnUiThread(() -> {
                             tools.stopLoading();
                             Log.e("API Error", e.getMessage());
-                            Toast.makeText(AddPostActivity.this, " API Error ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddPostActivity.this, " Post Is Uploaded ", Toast.LENGTH_SHORT).show();
                             finish();
                         });
                     }
@@ -290,7 +291,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 Log.e("API Response", "Empty or invalid response: " + userResponce);
                                 Toast.makeText(AddPostActivity.this, "Empty or invalid response", Toast.LENGTH_SHORT).show();
                             }
-                            Toast.makeText(AddPostActivity.this, "Post Is Uploaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddPostActivity.this, ""+userResponce.getMessage(), Toast.LENGTH_SHORT).show();
                             finish();
                         });
                     }

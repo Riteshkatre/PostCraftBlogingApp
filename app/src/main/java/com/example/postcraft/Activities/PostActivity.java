@@ -105,23 +105,15 @@ public class PostActivity extends AppCompatActivity {
 
 
             });
-            userProfile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    tools.showLoading();
-                    Intent i=new Intent(PostActivity.this, MyPostActivity.class);
-                    startActivity(i);
+            userProfile.setOnClickListener(v -> {
+                tools.showLoading();
+                Intent i=new Intent(PostActivity.this, MyPostActivity.class);
+                startActivity(i);
+                finish();
 
-                }
             });
 
-            swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    getPost();
-
-                }
-            });
+            swipeRefresh.setOnRefreshListener(() -> getPost());
 
         }
         getPost();

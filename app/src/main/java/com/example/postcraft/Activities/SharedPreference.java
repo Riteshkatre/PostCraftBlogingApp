@@ -13,7 +13,6 @@ public class SharedPreference {
     private static final String KEY_IS_LOGGED_OUT = "isLogOut";
 
 
-
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Context context;

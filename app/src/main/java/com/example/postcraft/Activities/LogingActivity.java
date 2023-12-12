@@ -142,7 +142,7 @@ public class LogingActivity extends AppCompatActivity {
                                     finish();
 
                                 } else {
-                                    Toast.makeText(LogingActivity.this, "invalid candidate please Register Email First ", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LogingActivity.this, " "+loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
 
                             }

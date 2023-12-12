@@ -122,6 +122,7 @@ public class RegisterActivity extends AppCompatActivity {
                 selectedImageUri = result.getData().getData();
                 imgUser.setImageURI(selectedImageUri);
                 currentPhotoPath = getRealPathFromUri(selectedImageUri);
+                currentPhotoFile=new File(currentPhotoPath);
             } else {
                 Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
             }

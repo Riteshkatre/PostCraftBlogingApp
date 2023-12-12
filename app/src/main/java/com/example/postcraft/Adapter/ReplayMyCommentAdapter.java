@@ -1,5 +1,6 @@
 package com.example.postcraft.Adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,22 +58,37 @@ public class ReplayMyCommentAdapter extends RecyclerView.Adapter<ReplayMyComment
             e.printStackTrace();
         }
         holder.tvEmail.setText(model.getEmail());
-        holder.delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int adapterPosition = holder.getAdapterPosition();
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                    DeleteReplyCommentApiCall(
-                            model.getReplyCommentId(),
-                            model.getCommentId(),
-                            model.getPostId(),
-                            adapterPosition
-                    );
-                }
+        holder.delete.setOnClickListener(v -> {
+            int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                DeleteReplyCommentApiCall(
+                        model.getReplyCommentId(),
+                        model.getCommentId(),
+                        model.getPostId(),
+                        adapterPosition
+                );
             }
         });
-    }
 
+        holder.userProfile.setOnClickListener(v -> showProfileImageInDialog(model.getProfileImage()));
+    }
+    private void showProfileImageInDialog(String imageUrl) {
+
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_pfofile_image);
+
+        ImageView imageView = dialog.findViewById(R.id.dialogImageView);
+        try {
+            Glide.with(context).load(imageUrl).placeholder(R.drawable.background).error(R.drawable.ic_launcher_foreground).into(imageView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Close the dialog
+        imageView.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
     private void DeleteReplyCommentApiCall(String ReplyCommentId, String CommentId, String PostId, int position) {
         if (restCall == null) {
             restCall = RestClient.createService(RestCall.class, VeriableBag.BASE_URL, VeriableBag.API_KEY);

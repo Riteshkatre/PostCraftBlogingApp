@@ -1,5 +1,6 @@
 package com.example.postcraft.Adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -116,8 +117,26 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 }
             }
         });
+        holder.userProfile.setOnClickListener(v -> showProfileImageInDialog(comment.getProfileImage()));
     }
 
+    private void showProfileImageInDialog(String imageUrl) {
+
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_pfofile_image);
+
+        ImageView imageView = dialog.findViewById(R.id.dialogImageView);
+        try {
+            Glide.with(context).load(imageUrl).placeholder(R.drawable.background).error(R.drawable.ic_launcher_foreground).into(imageView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Close the dialog
+        imageView.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
 
 
     public  void  DeleteComment(String CommentId,String PostId, int position){

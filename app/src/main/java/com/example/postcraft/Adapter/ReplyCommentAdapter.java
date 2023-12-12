@@ -1,5 +1,6 @@
 package com.example.postcraft.Adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,25 +69,40 @@ public class ReplyCommentAdapter extends RecyclerView.Adapter<ReplyCommentAdapte
 
         boolean isCurrentUserComment = model.getUserId().equals(currentUserID);
         holder.delete.setVisibility(isCurrentUserComment ? View.VISIBLE : View.GONE);
-        holder.delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int adapterPosition = holder.getAdapterPosition();
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                    DeleteReplyCommentApiCall(
-                            model.getReplyCommentId(),
-                            model.getCommentId(),
-                            model.getPostId(),
-                            adapterPosition
-                    );
-                }
+        holder.delete.setOnClickListener(v -> {
+            int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                DeleteReplyCommentApiCall(
+                        model.getReplyCommentId(),
+                        model.getCommentId(),
+                        model.getPostId(),
+                        adapterPosition
+                );
             }
         });
+
+        holder.userProfile.setOnClickListener(v -> showProfileImageInDialog(model.getProfileImage()));
 
 
 
     }
+    private void showProfileImageInDialog(String imageUrl) {
 
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_pfofile_image);
+
+        ImageView imageView = dialog.findViewById(R.id.dialogImageView);
+        try {
+            Glide.with(context).load(imageUrl).placeholder(R.drawable.background).error(R.drawable.ic_launcher_foreground).into(imageView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Close the dialog
+        imageView.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
     @Override
     public int getItemCount() {
         return replycommentList != null ? replycommentList.size() : 0;

@@ -30,6 +30,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     }
 
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -66,6 +67,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @Override
     public int getItemCount() {
         return Searchlist.size();
+    }
+    public boolean isEmpty() {
+        return categoryListResponceList.isEmpty();
+    }
+
+    public void updateData(List<CategoryListResponce.Category> newData) {
+        categoryListResponceList.clear();
+        categoryListResponceList.addAll(newData);
+        notifyDataSetChanged();
     }
 
     public void Search(CharSequence charSequence, RecyclerView rcv) {

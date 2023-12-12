@@ -108,17 +108,7 @@ public class HomeActivity extends AppCompatActivity {
         userEmail = headerView.findViewById(R.id.userEmail);
         userImage = headerView.findViewById(R.id.userImage);
 
-        String firstName = sharedPreference.getStringvalue("FIRST_NAME");
-        String lastName = sharedPreference.getStringvalue("LAST_NAME");
-        String email = sharedPreference.getStringvalue("EMAIL");
-        String photo = sharedPreference.getStringvalue("PHOTO");
 
-        Log.d("PhotoPath", "Photo Path: " + photo);
-
-        Glide.with(this).load(photo).error(R.drawable.baseline_remove_red_eye_24).into(userImage);
-
-        userName.setText(firstName + " " + lastName);
-        userEmail.setText(email);
 
         searchbar.setOnFocusChangeListener((v, hasFocus) -> {
             searchbar.setHint(hasFocus ? null : "Search Name Here");
@@ -133,6 +123,14 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 categoryAdapter.Search(charSequence, rcv);
+                if (categoryAdapter.isEmpty()) {
+                    tvNoData.setVisibility(View.VISIBLE);
+                } boolean isSearchResultsEmpty = categoryAdapter.isEmpty();
+                if (isSearchResultsEmpty) {
+                    tvNoData.setVisibility(View.VISIBLE);
+                } else {
+                    tvNoData.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -287,6 +285,22 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String firstName = sharedPreference.getStringvalue("FIRST_NAME");
+        String lastName = sharedPreference.getStringvalue("LAST_NAME");
+        String email = sharedPreference.getStringvalue("EMAIL");
+        String photo = sharedPreference.getStringvalue("PHOTO");
 
+        Log.d("PhotoPath", "Photo Path: " + photo);
 
+        Glide.with(this).load(photo).error(R.drawable.baseline_remove_red_eye_24).into(userImage);
+
+        userName.setText(firstName + " " + lastName);
+        userEmail.setText(email);
+        userName.setSelected(true);
+        userEmail.setSelected(true);
+
+    }
 }

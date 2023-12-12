@@ -66,14 +66,25 @@
                     android:layout_marginBottom="@dimen/_5sdp"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp" />
-                <ImageView
-                    android:layout_below="@id/tvDesc"
-                    android:id="@+id/postImage"
+                <RelativeLayout
+                    android:id="@+id/postImageLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_150sdp"
-                    android:scaleType="fitXY"
-                    android:layout_margin="@dimen/_6sdp"
-                    android:src="@drawable/bg"/>
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvDesc"
+                   >
+
+                    <ImageView
+                        android:id="@+id/postImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_6sdp"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_marginEnd="@dimen/_6sdp"
+                        android:layout_marginBottom="@dimen/_6sdp"
+                        android:scaleType="fitXY"
+                        android:maxHeight="@dimen/_150sdp"
+                        />
+                </RelativeLayout>
             </RelativeLayout>
 
             <LinearLayout

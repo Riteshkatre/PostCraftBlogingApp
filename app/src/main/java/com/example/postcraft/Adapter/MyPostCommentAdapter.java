@@ -1,5 +1,6 @@
 package com.example.postcraft.Adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -104,13 +105,28 @@ public class MyPostCommentAdapter extends RecyclerView.Adapter<MyPostCommentAdap
             notifyItemChanged(holder.getAdapterPosition());
 
         });
-        holder.delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                postClick.DeleteClick(comment);
+        holder.delete.setOnClickListener(v -> postClick.DeleteClick(comment));
 
-            }
-        });
+
+        holder.userProfile.setOnClickListener(v -> showProfileImageInDialog(comment.getProfileImage()));
+    }
+
+    private void showProfileImageInDialog(String imageUrl) {
+
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_pfofile_image);
+
+        ImageView imageView = dialog.findViewById(R.id.dialogImageView);
+        try {
+            Glide.with(context).load(imageUrl).placeholder(R.drawable.background).error(R.drawable.ic_launcher_foreground).into(imageView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Close the dialog
+        imageView.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     @Override

@@ -89,7 +89,10 @@ dependencies {
 
     //swiperefreshh........................
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
-
+//Zoom................................
+/*
+    implementation 'com.github.chrisbanes:PhotoView:2.6.0'
+*/
 
 
 

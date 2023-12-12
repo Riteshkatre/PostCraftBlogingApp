@@ -76,7 +76,7 @@
                         <ImageView
                             android:id="@+id/imgPost"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:scaleType="fitXY"
                             android:background="@drawable/upload"
                             />
@@ -111,7 +111,7 @@
                     android:textStyle="bold"
                     android:layout_margin="@dimen/_8sdp"
                     android:hint=" What's in your minds ?"
-                    android:textColorHint="@color/black"
+                    android:textColorHint="#706D6D"
                     android:scrollbars="vertical"
                     android:layout_height="match_parent"/>
             </androidx.cardview.widget.CardView>

@@ -208,12 +208,13 @@ public class UserProfileActivity extends AppCompatActivity {
                         tools.stopLoading();
                         runOnUiThread(() -> {
                             if (loginResponce != null && loginResponce.getStatus() != null && loginResponce.getStatus().equals(VeriableBag.SUCCESS_CODE)) {
-//                                Intent i = new Intent(UserProfileActivity.this, HomeActivity.class);
                                 sharedPreference.setStringvalue("FIRST_NAME", loginResponce.getFirstName());
                                 sharedPreference.setStringvalue("LAST_NAME", loginResponce.getLastName());
                                 sharedPreference.setStringvalue("PHOTO", loginResponce.getProfileImage());
                                 updateUIAfterEdit(loginResponce.getFirstName(), loginResponce.getLastName(), loginResponce.getProfileImage());
-//                                startActivity(i);
+                               /* Intent i = new Intent(UserProfileActivity.this, HomeActivity.class);
+
+                                startActivity(i);*/
                                 finish();
                             } else {
                                 Toast.makeText(UserProfileActivity.this, "" + loginResponce.getMessage(), Toast.LENGTH_SHORT).show();
