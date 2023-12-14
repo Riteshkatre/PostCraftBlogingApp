@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,6 +27,7 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.postcraft.Adapter.CategoryAdapter;
@@ -53,7 +55,7 @@ public class HomeActivity extends AppCompatActivity {
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
-    ImageView imgSearch;
+    ImageView imgSearch, mic;
     CardView threeDotImageView;
     NavigationView navigationView;
 
@@ -68,16 +70,19 @@ public class HomeActivity extends AppCompatActivity {
 
     SharedPreference sharedPreference;
     RecyclerView rcv;
-    private BiometricPrompt biometricPrompt;
-    private BiometricPrompt.PromptInfo promptInfo;
-
     Tools tools;
     TextView tvNoData;
+    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt.PromptInfo promptInfo;
+    private static final int VOICE_SEARCH_REQUEST_CODE = 200;
+
+    SwipeRefreshLayout swipeRefresh;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
         setContentView(R.layout.activity_home);
         threeDotImageView = findViewById(R.id.threedot);
@@ -88,9 +93,11 @@ public class HomeActivity extends AppCompatActivity {
         imgSearch.setVisibility(View.VISIBLE);
         searchbar = findViewById(R.id.searchbar);
         tvNoData = findViewById(R.id.tvNoData);
+        mic = findViewById(R.id.mic);
+        swipeRefresh = findViewById(R.id.swipeRefresh);
 
         sharedPreference = new SharedPreference(HomeActivity.this);
-        tools=new Tools(this);
+        tools = new Tools(this);
 
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         boolean isBiometricEnabled = sharedPreferences.getBoolean("biometricSwitchState", false);
@@ -109,7 +116,6 @@ public class HomeActivity extends AppCompatActivity {
         userImage = headerView.findViewById(R.id.userImage);
 
 
-
         searchbar.setOnFocusChangeListener((v, hasFocus) -> {
             searchbar.setHint(hasFocus ? null : "Search Name Here");
             imgSearch.setVisibility(View.VISIBLE);
@@ -122,15 +128,17 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                categoryAdapter.Search(charSequence, rcv);
-                if (categoryAdapter.isEmpty()) {
-                    tvNoData.setVisibility(View.VISIBLE);
-                } boolean isSearchResultsEmpty = categoryAdapter.isEmpty();
-                if (isSearchResultsEmpty) {
-                    tvNoData.setVisibility(View.VISIBLE);
+                categoryAdapter.Search(charSequence, rcv,tvNoData);
+
+                if (charSequence.length() > 0) {
+
+                    mic.setVisibility(View.GONE);
                 } else {
-                    tvNoData.setVisibility(View.GONE);
+
+                    mic.setVisibility(View.VISIBLE);
                 }
+
+                updateNoDataVisibility();
             }
 
             @Override
@@ -138,12 +146,23 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+
+
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
         );
+
+        mic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                opneVoiceDialog();
+            }
+        });
+
+        swipeRefresh.setOnRefreshListener(() -> getCategory());
 
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
@@ -177,6 +196,46 @@ public class HomeActivity extends AppCompatActivity {
         getCategory();
 
     }
+//for open voice dialog*******************************************************************************
+    private void opneVoiceDialog() {
+        Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        startActivityForResult(i, VOICE_SEARCH_REQUEST_CODE);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == VOICE_SEARCH_REQUEST_CODE && resultCode == RESULT_OK) {
+            ArrayList<String> arrayList = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (!arrayList.isEmpty()) {
+                String voice = arrayList.get(0);
+                searchCategory(voice);
+            } else {
+                Toast.makeText(this, "No voice input detected", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Can't Complete The Action", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void searchCategory(String categoryName) {
+
+        categoryAdapter.Search(categoryName, rcv,tvNoData);
+
+
+
+    }
+//********************************************************************************************************
+private void updateNoDataVisibility() {
+    boolean isSearchResultsEmpty = categoryAdapter.isEmpty();
+    if (isSearchResultsEmpty) {
+        tvNoData.setVisibility(View.VISIBLE);
+    } else {
+        tvNoData.setVisibility(View.GONE);
+    }
+}
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -217,6 +276,9 @@ public class HomeActivity extends AppCompatActivity {
     public void getCategory() {
 
         tools.showLoading();
+        rcv.setVisibility(View.VISIBLE);
+        tvNoData.setVisibility(View.GONE);
+        swipeRefresh.setRefreshing(false);
         restCall.getCategory("getCategory")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

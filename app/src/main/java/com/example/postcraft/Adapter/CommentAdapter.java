@@ -3,6 +3,8 @@ package com.example.postcraft.Adapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,6 +126,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_pfofile_image);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
 
         ImageView imageView = dialog.findViewById(R.id.dialogImageView);
         try {

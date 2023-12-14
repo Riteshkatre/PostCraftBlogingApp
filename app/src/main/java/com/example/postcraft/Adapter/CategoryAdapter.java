@@ -69,16 +69,16 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         return Searchlist.size();
     }
     public boolean isEmpty() {
-        return categoryListResponceList.isEmpty();
+        return Searchlist.isEmpty();
     }
 
     public void updateData(List<CategoryListResponce.Category> newData) {
         categoryListResponceList.clear();
         categoryListResponceList.addAll(newData);
+        Searchlist = new ArrayList<>(newData);
         notifyDataSetChanged();
     }
-
-    public void Search(CharSequence charSequence, RecyclerView rcv) {
+    public void Search(CharSequence charSequence, RecyclerView rcv,TextView textView) {
         try {
             String charString = charSequence.toString().toLowerCase().trim();
             if (charString.isEmpty()) {
@@ -96,8 +96,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 if (flag == 1) {
                     Searchlist = filterlist;
                     rcv.setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.GONE);
                 } else {
                     rcv.setVisibility(View.GONE);
+                    textView.setVisibility(View.VISIBLE);
                 }
             }
             notifyDataSetChanged();
